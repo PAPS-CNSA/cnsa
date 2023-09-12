@@ -1,0 +1,16 @@
+Package: cnsa
+Title: Fonctions utiles pour le pôle PAPS de la CNSA
+Version: 0.0.0.9000
+Authors@R: 
+    c(
+      person(given = "Aurélien", family = "Fortin", email = "aurelien.fortin@cnsa.fr", role = c("aut", "cre")),
+      person(family = "Caisse Nationale pour la Solidarité et l'Autonomie", role = "cph")
+    )
+Description: Ce package contient différentes fonctions utiles dans le cadre du travail de PAPS à la CNSA. 
+  En particulier, différentes fonctions de manipulations de données, une fonction qui permet d'inverser les "/" en copiant
+  les noms de répertoire (très utile !), ainsi que certaines fonctions d'imputation et de traitement de la non-réponse.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Language: fr
