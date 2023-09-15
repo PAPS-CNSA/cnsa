@@ -20,7 +20,14 @@ Config/testthat/edition: 3
 Imports: 
     data.table,
     dplyr,
+    ggplot2,
     magrittr,
     rlang,
     stats,
-    zoo
+    zoo,
+    gridExtra,
+    readxl,
+    rnaturalearth,
+    sf,
+    plyr,
+    stringr
