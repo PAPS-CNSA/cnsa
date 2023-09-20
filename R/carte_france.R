@@ -1,11 +1,23 @@
-#' @importFrom dplyr filter
-#' @param dataframe
-#' @param variable
-#' @param nom_legende
-#' @param breaks
-#' @param labels
+#' @importFrom dplyr filter left_join mutate
+#' @importFrom rnaturalearth ne_states
+#' @importFrom stringr str_sub
+#' @importFrom sf st_bbox st_centroid st_geometry st_as_sf st_crs
+#' @importFrom ggplot2 ggplot geom_sf scale_fill_distiller labs theme_void aes_string geom_sf_text aes coord_sf theme
+#' @importFrom gridExtra grid.arrange arrangeGrob
+NULL
+
+#' Cette fonction permet, à partir d'un data frame et/ou d'un fichier Excel, de créer une carte de France par département
 #'
-#' @return
+#' Cette carte de France est réalisée à partir d'une variable continue, pour laquelle il va falloir définir des "classes",
+#' C'est à dire des intervalles
+#'
+#' @param dataframe Une tableau de données, ou un fichier Excel. Ce dernier doit comporter des données départementales (une ligne par département), et au moins deux colonnes (une pour les départements, une pour la variable souhaitée)
+#' @param variable La variable sur laquelle on souhaite faire une carte
+#' @param nom_legende La légende souhaitée
+#' @param breaks Un vecteur avec les intervalles proposés
+#' @param labels Les labels des intervalles
+#'
+#' @return Une carte de France telle que souhaitée
 #' @export
 #'
 #' @examples
@@ -63,20 +75,7 @@ carte_france <- function(dataframe, variable, nom_legende, breaks, labels) {
                      st_bbox(fra)$ymin - st_bbox(mtq)$ymin  # correspondance des 'ymin'
                      + 0)  # décalage axe Y
 
-  place_geometry <- function(geometry, position, scale = 1) {
-    # prend en entrée une géométrie existante : 'geometry'
-    # déplace cette géométrie au point 'position'
-    # par défaut, pas de changement d'échelle
 
-    # Nouvelle géométrie
-    output_geometry <- (geometry - st_centroid(geometry)) * scale + st_centroid(geometry) +
-      # translation
-      position
-
-    # Ajouter le système de coordonnées
-    st_crs(output_geometry) <- st_crs(geometry)
-    return(output_geometry)
-  }
 
   mtq2 <- mtq %>%
     mutate(geometry = place_geometry(geometry = st_geometry(mtq),
@@ -127,7 +126,7 @@ carte_france <- function(dataframe, variable, nom_legende, breaks, labels) {
     #Breaks pour définir le nombre de classes et labels pour avoir le nom des classes
     scale_fill_distiller(palette="OrRd", na.value = "grey", direction = 1, breaks = breaks, labels = labels) +
     labs(x = "Longitude", y = "Latitude") +
-    geom_sf_text(data = all_sf_scale %>% filter(name %in% c("Martinique", "Guadeloupe", "La Réunion", "Mayotte",
+    geom_sf_text(data = all_sf_scale %>% filter(name %in% c("Martinique", "Guadeloupe", "La Reunion", "Mayotte",
                                                             "Guyane française")),
                  aes(label = name), nudge_y = 1, nudge_x = 0.5, size = 3)  +
     labs(fill = nom_legende) + #titre de la légende
