@@ -1,6 +1,6 @@
 Package: cnsa
 Title: Fonctions utiles pour le pôle PAPS de la CNSA
-Version: 1.0.0
+Version: 1.1.0
 Authors@R: 
     c(
       person(given = "Aurélien", family = "Fortin", email = "aurelien.fortin@cnsa.fr", role = c("aut", "cre")),
@@ -30,4 +30,12 @@ Imports:
     rnaturalearth,
     sf,
     plyr,
-    stringr
+    stringr,
+    leaflet,
+    leaflet.extras,
+    webshot,
+    htmlwidgets,
+    magick
+Depends: 
+    R (>= 2.10)
+LazyData: true
