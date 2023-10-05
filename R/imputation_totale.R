@@ -1,4 +1,5 @@
 #' @importFrom dplyr left_join summarize group_by
+#' @importFrom rlang syms
 NULL
 
 #' Imputation de Valeurs Manquantes par Ratio de Référence
@@ -32,6 +33,8 @@ imputation_totale <- function(tablo, nom_a_imputer, nom_identifiant, table_de_re
   # On va aller chercher, si besoin, des variables de caractérisation dans table_de_reference avec comme clé de jointure "nom_identifiant"
   # Les variables qu'on utilise sont dans "variables_de_groupe"
 
+  variables_de_groupe_syms <- syms(variables_de_groupe)
+
   # Renvoie un vecteur en résultat
 
   table_de_travail <- tablo[,c(nom_identifiant, nom_a_imputer)] %>%
@@ -40,10 +43,12 @@ imputation_totale <- function(tablo, nom_a_imputer, nom_identifiant, table_de_re
   # On calcule la référence en limitant la table aux répondants
   table_repondants <- table_de_travail[!is.na(table_de_travail[,nom_a_imputer]) & !is.na(table_de_travail[,variable_de_ratio]),]
 
-  table_ref_imp <- table_repondants %>% group_by(!!sym(variables_de_groupe)) %>% summarize(NUMERATEUR = sum(!!sym(nom_a_imputer)), DENOM = sum(!!sym(variable_de_ratio)))
+  table_ref_imp <- table_repondants %>% group_by(!!!variables_de_groupe_syms) %>% summarize(NUMERATEUR = sum(!!sym(nom_a_imputer)), DENOM = sum(!!sym(variable_de_ratio))) %>% ungroup()
   table_ref_imp$ratio <- table_ref_imp$NUMERATEUR / table_ref_imp$DENOM
 
   table_de_travail_2 <- table_de_travail %>% left_join(table_ref_imp[,c(variables_de_groupe, "ratio")], by =variables_de_groupe)
+
+  table_de_travail_2[[nom_a_imputer]] <- as.numeric(table_de_travail_2[[nom_a_imputer]])
 
   non_repondants <- unique(table_de_travail_2[is.na(table_de_travail_2[,nom_a_imputer]),]$nofinesset)
 
