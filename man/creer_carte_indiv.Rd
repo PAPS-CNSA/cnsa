@@ -4,7 +4,16 @@
 \alias{creer_carte_indiv}
 \title{Creer carte individuelle}
 \usage{
-creer_carte_indiv(donnees, region, palette, titre_legende = "Legende")
+creer_carte_indiv(
+  donnees,
+  region = "FRANCEMETRO",
+  palette,
+  titre_legende = "Legende",
+  afficher_valeurs = FALSE,
+  couleur_valeurs = "black",
+  arrondi_valeurs = NA,
+  taille_valeurs = 2
+)
 }
 \arguments{
 \item{donnees}{un tableau de données, format SF, avec les coordonnées}
@@ -14,6 +23,14 @@ creer_carte_indiv(donnees, region, palette, titre_legende = "Legende")
 \item{palette}{une palette de couleurs, fournie a priori avant (note : peut être à changer)}
 
 \item{titre_legende}{Si la légende s'affiche : qu'est-il marqué au dessus ?}
+
+\item{afficher_valeurs}{TRUE ou FALSE : détermine si on souhaite afficher les valeurs choisies sur la carte. Par défaut : FALSE}
+
+\item{couleur_valeurs}{couleur d'affichage des valeurs sur la carte. par défaut "black".}
+
+\item{arrondi_valeurs}{Si on souhaite arrondir les valeurs, par exemple au milliers. Le principe est celui de round, dans R : round(115,4554, 1) => 115,5 / round(115,45554, -2) => 100}
+
+\item{taille_valeurs}{taille des valeurs affichées, en pourcentage de la hauteur de la carte. Par défaut, 2 (pour 2\%)}
 }
 \value{
 une carte format leaflet

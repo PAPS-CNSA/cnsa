@@ -17,7 +17,7 @@ NULL
 #' @return une carte format jpg
 #' @export
 
-faire_une_carte <- function(table, type_output, type_visu = "FRANCE_ENTIERE", titre_legende = "Legende", type_var_souhait = "CAT_AUTO", classes_souh = 5, chemin_sortie = "", type_palette = "viridis") {
+faire_une_carte <- function(table, type_output = "image", type_visu = "FRANCE_ENTIERE", titre_legende = "Legende", type_var_souhait = "CAT_AUTO", classes_souh = 5, chemin_sortie = "", type_palette = "viridis") {
   # Cette fonction fait une carte ! En entrée, il faut juste :
   # - les données à cartographier
   # - le type d'output (image, ou shiny)
@@ -30,10 +30,10 @@ faire_une_carte <- function(table, type_output, type_visu = "FRANCE_ENTIERE", ti
   } else {
     colnames(table) <- c("DEPARTEMENT","VALEUR")
     table$DEPARTEMENT <- pad_left(table$DEPARTEMENT,2) # On s'assure de transformer les '1' en '01' pour eviter ce type de problème sur les départements
+    france_sf <- merge(france_shapefile, table, by.x = "code_insee", by.y = "DEPARTEMENT")
 
     if (type_visu == "FRANCE_ENTIERE") { # On est sur de la France entiere
 
-      france_sf <- merge(france_shapefile, table, by.x = "code_insee", by.y = "DEPARTEMENT")
       # On crée les différentes régions
       france_sf <- france_sf %>% mutate(REGION = case_when(
         code_insee == "971" ~ "971",
@@ -49,8 +49,13 @@ faire_une_carte <- function(table, type_output, type_visu = "FRANCE_ENTIERE", ti
       # On détermine une palette de couleurs
       palette_couleur <- creer_palette(france_sf$VALEUR, type_palette)
 
-      creer_toutes_cartes(france_sf, palette_couleur, titre_legende)
-      cumuler_cartes(chemin_sortie)
+      if (type_output == "image") {
+        creer_toutes_cartes(france_sf, palette_couleur, titre_legende)
+        cumuler_cartes(chemin_sortie)
+      } else {
+        resultat <- creer_carte_indiv(france_sf, "FRANCEMETRO", palette_couleur )
+        return(resultat)
+      }
     }
   }
 }

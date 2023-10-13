@@ -6,7 +6,7 @@
 \usage{
 faire_une_carte(
   table,
-  type_output,
+  type_output = "image",
   type_visu = "FRANCE_ENTIERE",
   titre_legende = "Legende",
   type_var_souhait = "CAT_AUTO",
