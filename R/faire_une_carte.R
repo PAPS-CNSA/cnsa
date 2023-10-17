@@ -48,7 +48,13 @@ faire_une_carte <- function(table, type_output = "image", region_concernee = "FR
         creer_toutes_cartes(france_sf, palette = palette_couleur, titre_legende = titre_legende, regions_selectionnees = region_concernee, afficher_valeurs = afficher_valeurs, couleur_valeurs = couleur_valeurs, arrondi_valeurs = arrondi_valeurs, taille_valeurs = taille_valeurs, afficher_legende = afficher_legende, save_png = TRUE)
         cumuler_cartes(chemin_sortie)
       } else {
-        creer_carte_indiv(donnees = france_sf, region = region_concernee, palette = palette_couleur, titre_legende = titre_legende, afficher_valeurs=afficher_valeurs, arrondi_valeurs = arrondi_valeurs, taille_valeurs = taille_valeurs, afficher_legende = afficher_legende, save_png = TRUE )
+        if (region_concernee == "FRANCEENTIERE_IDF") {
+          creer_toutes_cartes(france_sf, palette = palette_couleur, titre_legende = titre_legende, regions_selectionnees = "FRANCEENTIERE", afficher_valeurs = afficher_valeurs, couleur_valeurs = couleur_valeurs, arrondi_valeurs = arrondi_valeurs, taille_valeurs = taille_valeurs, afficher_legende = afficher_legende, save_png = TRUE)
+          cumuler_cartes(chemin_sortie)
+          creer_carte_indiv(france_sf, palette = palette_couleur, titre_legende = titre_legende, region = "11", afficher_valeurs = afficher_valeurs, couleur_valeurs = couleur_valeurs, arrondi_valeurs = arrondi_valeurs, taille_valeurs = taille_valeurs, afficher_legende = FALSE, save_png = TRUE)
+        } else {
+          creer_carte_indiv(donnees = france_sf, region = region_concernee, palette = palette_couleur, titre_legende = titre_legende, afficher_valeurs=afficher_valeurs, arrondi_valeurs = arrondi_valeurs, taille_valeurs = taille_valeurs, afficher_legende = afficher_legende, save_png = TRUE )
+        }
       }
 
     } else {

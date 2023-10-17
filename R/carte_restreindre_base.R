@@ -12,7 +12,7 @@ NULL
 carte_restreindre_base <- function(donnees, region) {
   if (region == "FRANCEMETRO") {
     resultat <- donnees %>% filter(.data$REGION_AGR %in% "FRANCEMETRO")
-  } else if (region == "FRANCEENTIERE") {
+  } else if (region %in% c("FRANCEENTIERE","FRANCEENTIERE_IDF")) {
     resultat <- donnees
   } else {
     resultat <- donnees %>% filter(.data$REGION == region)

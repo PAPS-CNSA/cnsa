@@ -25,20 +25,12 @@ creer_toutes_cartes <- function(france_sf,palette, titre_legende = "Legende", re
 
   for (region in regions_selectionnees) {
     # Générez la carte avec votre fonction generate_map
-    map <- creer_carte_indiv(france_sf, region, palette, titre_legende, afficher_valeurs=afficher_valeurs, couleur_valeurs=couleur_valeurs , arrondi_valeurs=arrondi_valeurs, taille_valeurs=taille_valeurs, save_png = save_png)  # Supposant que generate_map retourne un objet Leaflet
+    if (region == "FRANCEMETRO") {
+      creer_carte_indiv(france_sf, region, palette, titre_legende, afficher_valeurs=afficher_valeurs, couleur_valeurs=couleur_valeurs , arrondi_valeurs=arrondi_valeurs, taille_valeurs=taille_valeurs, save_png = save_png, afficher_legende = TRUE)  # Supposant que generate_map retourne un objet Leaflet
+    } else {
+      creer_carte_indiv(france_sf, region, palette, titre_legende, afficher_valeurs=afficher_valeurs, couleur_valeurs=couleur_valeurs , arrondi_valeurs=arrondi_valeurs, taille_valeurs=taille_valeurs, save_png = save_png)  # Supposant que generate_map retourne un objet Leaflet
+    }
 
-    # if (!all(is.na(map))) {
-    #   # Créez un nom de fichier basé sur la région (en supprimant les caractères non valides)
-    #   file_name_html <- paste0("map_", gsub(" ", "_", gsub("/", "", region)), ".html")
-    #   file_name_png <- paste0("map_", gsub(" ", "_", gsub("/", "", region)), ".png")
-    #
-    #   # Sauvegardez le widget Leaflet en tant que fichier HTML
-    #   saveWidget(map, file = file_name_html, selfcontained = TRUE)
-    #
-    #   # Capturez une image du fichier HTML et sauvegardez-la en tant que PNG
-    #   webshot::webshot(file_name_html, file = file_name_png,vwidth = 1024, vheight = 768, cliprect = c(10, 100, 1014, 740))
-    #
-    # }
   }
 
 }
