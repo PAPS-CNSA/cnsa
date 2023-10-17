@@ -2,6 +2,7 @@
 
 export(ajouter_titre_image)
 export(calculer_mode)
+export(carte_restreindre_base)
 export(conversion_num)
 export(correction_simple_deux_annees)
 export(creer_carte_indiv)

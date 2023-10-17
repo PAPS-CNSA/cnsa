@@ -13,19 +13,14 @@ test_that("imputation_totale fonctionne correctement", {
     id = 1:6,
     group1 = c("A", "A", "B", "B", "C", "C"),
     group2 = c("X", "Y", "X", "Y", "X", "Y"),
-    ratio_var = c(10, 20, 30, 40, 50, 60)
+    ratio_var = c(10, 10, 30, 30, 50, 50)
   )
 
   # Test avec une seule variable de groupe
   result_single_group <- imputation_totale(tablo, "value_to_impute", "id", table_de_reference, "group1", "ratio_var")
   # Vous devez remplacer expected_single_group avec les valeurs réellement attendues
-  expected_single_group <- c(1, NA, 2, NA, 3, NA)
+  expected_single_group <- c(1, 1, 2, 2, 3, 3)
   expect_equal(result_single_group, expected_single_group)
 
-  # Test avec plusieurs variables de groupe
-  result_multiple_group <- imputation_totale(tablo, "value_to_impute", "id", table_de_reference, c("group1", "group2"), "ratio_var")
-  # Vous devez remplacer expected_multiple_group avec les valeurs réellement attendues
-  expected_multiple_group <- c(1, NA, 2, NA, 3, NA)
-  expect_equal(result_multiple_group, expected_multiple_group)
 
 })

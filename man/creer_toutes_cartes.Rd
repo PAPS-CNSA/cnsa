@@ -4,7 +4,18 @@
 \alias{creer_toutes_cartes}
 \title{Cette fonction lance la création des différentes cartes utiles (notamment DOM)}
 \usage{
-creer_toutes_cartes(france_sf, palette, titre_legende)
+creer_toutes_cartes(
+  france_sf,
+  palette,
+  titre_legende = "Legende",
+  regions_selectionnees = "FRANCEENTIERE",
+  afficher_valeurs = FALSE,
+  couleur_valeurs = "black",
+  arrondi_valeurs = NA,
+  taille_valeurs = 2,
+  afficher_legende = FALSE,
+  save_png = TRUE
+)
 }
 \arguments{
 \item{france_sf}{Un tableau de données SF, qui inclut notamment les coordonnées des départements (polygones)}
@@ -12,6 +23,16 @@ creer_toutes_cartes(france_sf, palette, titre_legende)
 \item{palette}{une palette de couleurs}
 
 \item{titre_legende}{Le nom de la légende qui doit apparaitre}
+
+\item{afficher_valeurs}{TRUE ou FALSE : détermine si on souhaite afficher les valeurs choisies sur la carte. Par défaut : FALSE}
+
+\item{couleur_valeurs}{couleur d'affichage des valeurs sur la carte. par défaut "black".}
+
+\item{arrondi_valeurs}{Si on souhaite arrondir les valeurs, par exemple au milliers. Le principe est celui de round, dans R : round(115,4554, 1) => 115,5 / round(115,45554, -2) => 100}
+
+\item{taille_valeurs}{taille des valeurs affichées, en pourcentage de la hauteur de la carte. Par défaut, 2 (pour 2\%)}
+
+\item{save_png}{TRUE ou FALSE, selon qu'on souhaite ou non sauver un png avec l'image}
 }
 \value{
 Beaucoup de cartes, stockées au format png (une par département)

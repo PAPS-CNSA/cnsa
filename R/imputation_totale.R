@@ -33,26 +33,41 @@ imputation_totale <- function(tablo, nom_a_imputer, nom_identifiant, table_de_re
   # On va aller chercher, si besoin, des variables de caractérisation dans table_de_reference avec comme clé de jointure "nom_identifiant"
   # Les variables qu'on utilise sont dans "variables_de_groupe"
 
-  variables_de_groupe_syms <- syms(variables_de_groupe)
+  if (!any(is.na(variables_de_groupe))) {
+    variables_de_groupe_syms <- syms(variables_de_groupe)
+    table_de_travail <- tablo[,c(nom_identifiant, nom_a_imputer)] %>%
+      left_join(table_de_reference[,c(nom_identifiant, variables_de_groupe,variable_de_ratio)] , by = nom_identifiant)
+  } else {
+    table_de_travail <- tablo[,c(nom_identifiant, nom_a_imputer)] %>%
+      left_join(table_de_reference[,c(nom_identifiant, variable_de_ratio)] , by = nom_identifiant)
 
-  # Renvoie un vecteur en résultat
+  }
 
-  table_de_travail <- tablo[,c(nom_identifiant, nom_a_imputer)] %>%
-    left_join(table_de_reference[,c(nom_identifiant, variables_de_groupe,variable_de_ratio)] , by = nom_identifiant)
+
 
   # On calcule la référence en limitant la table aux répondants
   table_repondants <- table_de_travail[!is.na(table_de_travail[,nom_a_imputer]) & !is.na(table_de_travail[,variable_de_ratio]),]
 
-  table_ref_imp <- table_repondants %>% group_by(!!!variables_de_groupe_syms) %>% summarize(NUMERATEUR = sum(!!sym(nom_a_imputer)), DENOM = sum(!!sym(variable_de_ratio))) %>% ungroup()
+  if (!any(is.na(variables_de_groupe))) {
+    table_ref_imp <- table_repondants %>% group_by(!!!variables_de_groupe_syms) %>% summarize(NUMERATEUR = sum(!!sym(nom_a_imputer)), DENOM = sum(!!sym(variable_de_ratio))) %>% ungroup()
+  } else {
+    table_ref_imp <- table_repondants %>% summarize(NUMERATEUR = sum(!!sym(nom_a_imputer)), DENOM = sum(!!sym(variable_de_ratio)))
+  }
+
   table_ref_imp$ratio <- table_ref_imp$NUMERATEUR / table_ref_imp$DENOM
 
-  table_de_travail_2 <- table_de_travail %>% left_join(table_ref_imp[,c(variables_de_groupe, "ratio")], by =variables_de_groupe)
+  if (!any(is.na(variables_de_groupe))) {
+    table_de_travail_2 <- table_de_travail %>% left_join(table_ref_imp[,c(variables_de_groupe, "ratio")], by =variables_de_groupe)
+  } else {
+    table_de_travail_2 <- table_de_travail
+    table_de_travail_2$ratio <- mean(table_ref_imp$ratio)
+  }
 
   table_de_travail_2[[nom_a_imputer]] <- as.numeric(table_de_travail_2[[nom_a_imputer]])
 
-  non_repondants <- unique(table_de_travail_2[is.na(table_de_travail_2[,nom_a_imputer]),]$nofinesset)
+  non_repondants <- unique(table_de_travail_2[is.na(table_de_travail_2[,nom_a_imputer]),][[nom_identifiant]])
 
-  table_de_travail_2[table_de_travail_2$nofinesset %in% non_repondants,nom_a_imputer] <- table_de_travail_2[table_de_travail_2$nofinesset %in% non_repondants, "ratio"] * table_de_travail_2[table_de_travail_2$nofinesset %in% non_repondants,variable_de_ratio]
+  table_de_travail_2[table_de_travail_2[[nom_identifiant]] %in% non_repondants,nom_a_imputer] <- table_de_travail_2[table_de_travail_2[[nom_identifiant]] %in% non_repondants, "ratio"] * table_de_travail_2[table_de_travail_2[[nom_identifiant]] %in% non_repondants,variable_de_ratio]
 
   return(table_de_travail_2[,nom_a_imputer])
 }

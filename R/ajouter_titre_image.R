@@ -12,21 +12,25 @@ NULL
 #' @export
 
 ajouter_titre_image <- function(titre, nom_image) {
-  image_chargee <- image_read(nom_image)
+  if (file.exists(nom_image)) {
+    image_chargee <- image_read(nom_image)
 
-  # Définir les propriétés du texte
-  text <- titre
-  font <- "Arial"
-  size <- 80
-  color <- "black"
+    # Définir les propriétés du texte
+    text <- titre
+    font <- "Arial"
+    size <- 80
+    color <- "black"
 
-  image_chargee <- image_chargee %>%
-    image_annotate(text = text, gravity = "NorthEast", location = "+30-0",
-                   font = font, size = size, color = color)
+    image_chargee <- image_chargee %>%
+      image_annotate(text = text, gravity = "NorthEast", location = "+30-0",
+                     font = font, size = size, color = color)
 
 
-  # Sauvegarder l'image finale (remplacez "output_image.png" par le nom souhaité pour votre image finale)
-  image_write(image_chargee, nom_image)
+    # Sauvegarder l'image finale (remplacez "output_image.png" par le nom souhaité pour votre image finale)
+    image_write(image_chargee, nom_image)
 
-  return(image_chargee)
+    return(image_chargee)
+  } else {
+    return("Image inexistante")
+  }
 }

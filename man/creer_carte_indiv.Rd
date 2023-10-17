@@ -12,7 +12,9 @@ creer_carte_indiv(
   afficher_valeurs = FALSE,
   couleur_valeurs = "black",
   arrondi_valeurs = NA,
-  taille_valeurs = 2
+  taille_valeurs = 2,
+  afficher_legende = FALSE,
+  save_png = FALSE
 )
 }
 \arguments{
@@ -31,6 +33,8 @@ creer_carte_indiv(
 \item{arrondi_valeurs}{Si on souhaite arrondir les valeurs, par exemple au milliers. Le principe est celui de round, dans R : round(115,4554, 1) => 115,5 / round(115,45554, -2) => 100}
 
 \item{taille_valeurs}{taille des valeurs affichées, en pourcentage de la hauteur de la carte. Par défaut, 2 (pour 2\%)}
+
+\item{save_png}{TRUE ou FALSE, selon qu'on souhaite ou non sauver un png avec l'image}
 }
 \value{
 une carte format leaflet

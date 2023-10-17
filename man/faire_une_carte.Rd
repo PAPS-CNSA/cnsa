@@ -7,20 +7,24 @@
 faire_une_carte(
   table,
   type_output = "image",
-  type_visu = "FRANCE_ENTIERE",
+  region_concernee = "FRANCEENTIERE",
   titre_legende = "Legende",
   type_var_souhait = "CAT_AUTO",
   classes_souh = 5,
   chemin_sortie = "",
-  type_palette = "viridis"
+  type_palette = "viridis",
+  afficher_valeurs = FALSE,
+  couleur_valeurs = "black",
+  arrondi_valeurs = NA,
+  taille_valeurs = 2,
+  afficher_legende = FALSE,
+  save_png = FALSE
 )
 }
 \arguments{
 \item{table}{Un tableau de données. Deux colonnes : la première avec des départements, la 2e avec la variable à mettre sur la carte (c'est la seule contrainte pour que cela marche !)}
 
 \item{type_output}{Type d'output souhaité (à terme, doit permettre d'intégrer une option "shiny")}
-
-\item{type_visu}{Type de visualisation. Par défaut "France Entière", c'est à dire y compris outremer}
 
 \item{titre_legende}{Le nom de la légende (par défaut "Legende")}
 
@@ -31,6 +35,18 @@ faire_une_carte(
 \item{chemin_sortie}{le répertoire dans lequel on enregistre le jpg résultat (par défaut le répertoire de travail)}
 
 \item{type_palette}{Type de la palette (par défaut : viridis)}
+
+\item{afficher_valeurs}{TRUE ou FALSE : détermine si on souhaite afficher les valeurs choisies sur la carte. Par défaut : FALSE}
+
+\item{couleur_valeurs}{couleur d'affichage des valeurs sur la carte. par défaut "black".}
+
+\item{arrondi_valeurs}{Si on souhaite arrondir les valeurs, par exemple au milliers. Le principe est celui de round, dans R : round(115,4554, 1) => 115,5 / round(115,45554, -2) => 100}
+
+\item{taille_valeurs}{taille des valeurs affichées, en pourcentage de la hauteur de la carte. Par défaut, 2 (pour 2\%)}
+
+\item{save_png}{TRUE ou FALSE, selon qu'on souhaite ou non sauver un png avec l'image}
+
+\item{type_visu}{Type de visualisation. Par défaut "France Entière", c'est à dire y compris outremer}
 }
 \value{
 une carte format jpg

@@ -2,6 +2,8 @@
 #' @importFrom sf st_bbox st_centroid
 #' @importFrom leaflet leaflet addLegend addPolygons addLabelOnlyMarkers labelOptions
 #' @importFrom leaflet.extras setMapWidgetStyle
+#' @importFrom webshot webshot
+#' @importFrom htmlwidgets saveWidget
 NULL
 
 #' Creer carte individuelle
@@ -16,68 +18,75 @@ NULL
 #' @param couleur_valeurs couleur d'affichage des valeurs sur la carte. par défaut "black".
 #' @param arrondi_valeurs Si on souhaite arrondir les valeurs, par exemple au milliers. Le principe est celui de round, dans R : round(115,4554, 1) => 115,5 / round(115,45554, -2) => 100
 #' @param taille_valeurs taille des valeurs affichées, en pourcentage de la hauteur de la carte. Par défaut, 2 (pour 2%)
+#' @param save_png TRUE ou FALSE, selon qu'on souhaite ou non sauver un png avec l'image
 #'
 #' @return une carte format leaflet
 #' @export
 #'
 
-creer_carte_indiv <- function(donnees, region = "FRANCEMETRO", palette, titre_legende = "Legende", afficher_valeurs = FALSE, couleur_valeurs = "black", arrondi_valeurs = NA, taille_valeurs = 2) {
+creer_carte_indiv <- function(donnees, region = "FRANCEMETRO", palette, titre_legende = "Legende", afficher_valeurs = FALSE, couleur_valeurs = "black", arrondi_valeurs = NA, taille_valeurs = 2, afficher_legende=FALSE, save_png = FALSE) {
   # Fonction qui créée une carte pour une région donnée, avec une palette déjà prédéfinie
-  data <- donnees
+  data <- carte_restreindre_base(donnees,region)
 
-  if (!(region %in% c("FRANCEENTIERE","FRANCEMETRO",unique(donnees$REGION)))) {
-    print("La region indiquee ne fait pas partie des choix possibles: on part sur France Entiere")
+  if (dim(data)[1]==0) { # La région n'est pas dans les données : on ne fait rien
+    return(NA)
   } else {
-    if (region != "FRANCE_ENTIERE") {
-      if (region == "FRANCEMETRO") {
-        data <- donnees %>% filter(!(.data$REGION %in% c("971","972","973","974","975","976","978")))
-      } else {
-        data <- donnees %>% filter(.data$REGION == region)
-      }
-    }
-  }
+    bbox <- st_bbox(data)
 
-  bbox <- st_bbox(data)
-
-  if (is.numeric(data$VALEUR)) {
-    carte <- leaflet(data) %>%
-      addPolygons(
-        fillColor = ~palette(VALEUR),
-        fillOpacity = 0.8,
-        color = "white",
-        weight = 1
-      ) %>%
-      setMapWidgetStyle(list(background= "white"))
-  } else {
-    carte <- leaflet(data) %>%
-      addPolygons(
-        fillColor = ~palette(as.factor(VALEUR)),
-        fillOpacity = 0.8,
-        color = "white",
-        weight = 1
-      ) %>%
-      setMapWidgetStyle(list(background= "white"))
-  }
-
-  if (afficher_valeurs) { # Cas où on souhaite afficher les valeurs sur la carte
-    centroids <- st_centroid(data) # On calcule le centre de chaque polygone, pour bien afficher les valeurs
-
-    if (is.na(arrondi_valeurs)) {
-      label_values <- as.character(data$VALEUR)
+    if (is.numeric(data$VALEUR)) {
+      carte <- leaflet(data) %>%
+        addPolygons(
+          fillColor = ~palette(VALEUR),
+          fillOpacity = 0.8,
+          color = "white",
+          weight = 1
+        ) %>%
+        setMapWidgetStyle(list(background= "white"))
     } else {
-      label_values <- as.character(round(data$VALEUR, arrondi_valeurs))
+      carte <- leaflet(data) %>%
+        addPolygons(
+          fillColor = ~palette(as.factor(VALEUR)),
+          fillOpacity = 0.8,
+          color = "white",
+          weight = 1
+        ) %>%
+        setMapWidgetStyle(list(background= "white"))
     }
 
-    carte <- carte %>%
-      addLabelOnlyMarkers(data = centroids,
-                          label = ~label_values,
-                          labelOptions = labelOptions(style = list("font-size"=paste0(taille_valeurs, "vw"), color = couleur_valeurs),
-                                                      noHide = T, direction = "center", textOnly = TRUE, offset=c(0,0)))
+    if (afficher_valeurs) { # Cas où on souhaite afficher les valeurs sur la carte
+      centroids <- st_centroid(data) # On calcule le centre de chaque polygone, pour bien afficher les valeurs
+
+      if (is.na(arrondi_valeurs)) {
+        label_values <- as.character(data$VALEUR)
+      } else {
+        label_values <- as.character(round(data$VALEUR, arrondi_valeurs))
+      }
+
+      carte <- carte %>%
+        addLabelOnlyMarkers(data = centroids,
+                            label = ~label_values,
+                            labelOptions = labelOptions(style = list("font-size"=paste0(taille_valeurs, "vw"), color = couleur_valeurs),
+                                                        noHide = T, direction = "center", textOnly = TRUE, offset=c(0,0)))
+    }
+
+    if (afficher_legende) {
+      carte <- carte %>% addLegend(pal = palette, values = ~VALEUR, title = titre_legende, position = "bottomright")
+    }
+
+    if (!all(is.na(carte))) {
+      # Créez un nom de fichier basé sur la région (en supprimant les caractères non valides)
+      file_name_html <- paste0("map_", gsub(" ", "_", gsub("/", "", region)), ".html")
+      file_name_png <- paste0("map_", gsub(" ", "_", gsub("/", "", region)), ".png")
+
+      # Sauvegardez le widget Leaflet en tant que fichier HTML
+      saveWidget(carte, file = file_name_html, selfcontained = TRUE)
+
+      # Capturez une image du fichier HTML et sauvegardez-la en tant que PNG
+      webshot::webshot(file_name_html, file = file_name_png,vwidth = 1024, vheight = 768, cliprect = c(10, 100, 1014, 740))
+
+    }
+
+    return(carte)
   }
 
-  if (region == "FRANCEMETRO") {
-    carte <- carte %>% addLegend(pal = palette, values = ~VALEUR, title = titre_legende, position = "bottomright")
-  }
-
-  return(carte)
 }
