@@ -24,6 +24,8 @@ creer_toutes_cartes(
 
 \item{titre_legende}{Le nom de la légende qui doit apparaitre}
 
+\item{regions_selectionnees}{Type de visualisation. Par défaut "FRANCEENTIERE", c'est à dire y compris outremer}
+
 \item{afficher_valeurs}{TRUE ou FALSE : détermine si on souhaite afficher les valeurs choisies sur la carte. Par défaut : FALSE}
 
 \item{couleur_valeurs}{couleur d'affichage des valeurs sur la carte. par défaut "black".}
@@ -31,6 +33,8 @@ creer_toutes_cartes(
 \item{arrondi_valeurs}{Si on souhaite arrondir les valeurs, par exemple au milliers. Le principe est celui de round, dans R : round(115,4554, 1) => 115,5 / round(115,45554, -2) => 100}
 
 \item{taille_valeurs}{taille des valeurs affichées, en pourcentage de la hauteur de la carte. Par défaut, 2 (pour 2\%)}
+
+\item{afficher_legende}{affiche, ou non, la légende à côté de la carte}
 
 \item{save_png}{TRUE ou FALSE, selon qu'on souhaite ou non sauver un png avec l'image}
 }

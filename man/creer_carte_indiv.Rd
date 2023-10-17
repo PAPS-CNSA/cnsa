@@ -34,6 +34,8 @@ creer_carte_indiv(
 
 \item{taille_valeurs}{taille des valeurs affichées, en pourcentage de la hauteur de la carte. Par défaut, 2 (pour 2\%)}
 
+\item{afficher_legende}{affiche, ou non, la légende à côté de la carte}
+
 \item{save_png}{TRUE ou FALSE, selon qu'on souhaite ou non sauver un png avec l'image}
 }
 \value{

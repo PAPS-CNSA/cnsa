@@ -8,7 +8,7 @@ NULL
 #'
 #' @param table Un tableau de données. Deux colonnes : la première avec des départements, la 2e avec la variable à mettre sur la carte (c'est la seule contrainte pour que cela marche !)
 #' @param type_output Type d'output souhaité (à terme, doit permettre d'intégrer une option "shiny")
-#' @param type_visu Type de visualisation. Par défaut "France Entière", c'est à dire y compris outremer
+#' @param region_concernee Type de visualisation. Par défaut "France Entière", c'est à dire y compris outremer
 #' @param titre_legende Le nom de la légende (par défaut "Legende")
 #' @param type_var_souhait Le type de variable souhaité. Cela peut être "CAT_AUTO" : la variable est alors automatiquement transformée en catégorielle si besoin. "NUM" : dans ce cas, si la variable est numérique, elle reste telle quelle.
 #' @param classes_souh Classes souhaitées. Si on est dans la CAT_AUTO, il faut un nombre qui est le nombre de classes ; si on est dans CAT_MAN : alors on fournit les catégories. Par défaut CAT_AUTO
@@ -18,6 +18,7 @@ NULL
 #' @param couleur_valeurs couleur d'affichage des valeurs sur la carte. par défaut "black".
 #' @param arrondi_valeurs Si on souhaite arrondir les valeurs, par exemple au milliers. Le principe est celui de round, dans R : round(115,4554, 1) => 115,5 / round(115,45554, -2) => 100
 #' @param taille_valeurs taille des valeurs affichées, en pourcentage de la hauteur de la carte. Par défaut, 2 (pour 2%)
+#' @param afficher_legende affiche, ou non, la légende à côté de la carte
 #' @param save_png TRUE ou FALSE, selon qu'on souhaite ou non sauver un png avec l'image
 #' @return une carte format jpg
 #' @export

@@ -18,6 +18,7 @@ NULL
 #' @param couleur_valeurs couleur d'affichage des valeurs sur la carte. par défaut "black".
 #' @param arrondi_valeurs Si on souhaite arrondir les valeurs, par exemple au milliers. Le principe est celui de round, dans R : round(115,4554, 1) => 115,5 / round(115,45554, -2) => 100
 #' @param taille_valeurs taille des valeurs affichées, en pourcentage de la hauteur de la carte. Par défaut, 2 (pour 2%)
+#' @param afficher_legende affiche, ou non, la légende à côté de la carte
 #' @param save_png TRUE ou FALSE, selon qu'on souhaite ou non sauver un png avec l'image
 #'
 #' @return une carte format leaflet

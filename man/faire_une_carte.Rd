@@ -26,6 +26,8 @@ faire_une_carte(
 
 \item{type_output}{Type d'output souhaité (à terme, doit permettre d'intégrer une option "shiny")}
 
+\item{region_concernee}{Type de visualisation. Par défaut "France Entière", c'est à dire y compris outremer}
+
 \item{titre_legende}{Le nom de la légende (par défaut "Legende")}
 
 \item{type_var_souhait}{Le type de variable souhaité. Cela peut être "CAT_AUTO" : la variable est alors automatiquement transformée en catégorielle si besoin. "NUM" : dans ce cas, si la variable est numérique, elle reste telle quelle.}
@@ -44,9 +46,9 @@ faire_une_carte(
 
 \item{taille_valeurs}{taille des valeurs affichées, en pourcentage de la hauteur de la carte. Par défaut, 2 (pour 2\%)}
 
-\item{save_png}{TRUE ou FALSE, selon qu'on souhaite ou non sauver un png avec l'image}
+\item{afficher_legende}{affiche, ou non, la légende à côté de la carte}
 
-\item{type_visu}{Type de visualisation. Par défaut "France Entière", c'est à dire y compris outremer}
+\item{save_png}{TRUE ou FALSE, selon qu'on souhaite ou non sauver un png avec l'image}
 }
 \value{
 une carte format jpg
