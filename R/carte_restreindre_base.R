@@ -10,12 +10,18 @@ NULL
 #' @export
 
 carte_restreindre_base <- function(donnees, region) {
-  if (region == "FRANCEMETRO") {
-    resultat <- donnees %>% filter(.data$REGION_AGR %in% "FRANCEMETRO")
-  } else if (region %in% c("FRANCEENTIERE","FRANCEENTIERE_IDF")) {
+  dom <- c('01','02','03','04','05','06')
+  if ("FRANCEMETRO" %in% region) {
+    if (any(dom %in% region)) {
+      dom_absents <- dom[!dom %in% region]
+      resultat <- donnees %>% filter(!(.data$REGION_AGR %in% dom_absents ))
+    } else {
+      resultat <- donnees %>% filter(.data$REGION_AGR %in% "FRANCEMETRO")
+    }
+  } else if (any(c("FRANCEENTIERE","FRANCEENTIERE_IDF") %in% region)) {
     resultat <- donnees
   } else {
-    resultat <- donnees %>% filter(.data$REGION == region)
+    resultat <- donnees %>% filter(.data$REGION %in% region)
   }
   return(resultat)
 }

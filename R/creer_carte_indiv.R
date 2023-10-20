@@ -34,7 +34,7 @@ creer_carte_indiv <- function(donnees, region = "FRANCEMETRO", palette, titre_le
   } else {
     bbox <- st_bbox(data)
 
-    if (is.numeric(data$VALEUR)) {
+    if (is.numeric(data$VALEUR_CLASSE)) {
       carte <- leaflet(data) %>%
         addPolygons(
           fillColor = ~palette(VALEUR),
@@ -46,7 +46,7 @@ creer_carte_indiv <- function(donnees, region = "FRANCEMETRO", palette, titre_le
     } else {
       carte <- leaflet(data) %>%
         addPolygons(
-          fillColor = ~palette(as.factor(VALEUR)),
+          fillColor = ~palette(as.factor(VALEUR_CLASSE)),
           fillOpacity = 0.8,
           color = "white",
           weight = 1
@@ -71,7 +71,7 @@ creer_carte_indiv <- function(donnees, region = "FRANCEMETRO", palette, titre_le
     }
 
     if (afficher_legende) {
-      carte <- carte %>% addLegend(pal = palette, values = ~VALEUR, title = titre_legende, position = "bottomright")
+      carte <- carte %>% addLegend(pal = palette, values = ~VALEUR_CLASSE, title = titre_legende, position = "bottomright")
     }
 
     if (!all(is.na(carte))) {

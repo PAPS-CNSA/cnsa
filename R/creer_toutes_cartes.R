@@ -30,7 +30,7 @@ creer_toutes_cartes <- function(france_sf,palette, titre_legende = "Legende", re
     if (region == "FRANCEMETRO") {
       creer_carte_indiv(france_sf, region, palette, titre_legende, afficher_valeurs=afficher_valeurs, couleur_valeurs=couleur_valeurs , arrondi_valeurs=arrondi_valeurs, taille_valeurs=taille_valeurs, save_png = save_png, afficher_legende = TRUE)  # Supposant que generate_map retourne un objet Leaflet
     } else {
-      creer_carte_indiv(france_sf, region, palette, titre_legende, afficher_valeurs=afficher_valeurs, couleur_valeurs=couleur_valeurs , arrondi_valeurs=arrondi_valeurs, taille_valeurs=taille_valeurs, save_png = save_png)  # Supposant que generate_map retourne un objet Leaflet
+      creer_carte_indiv(france_sf, region, palette, titre_legende, afficher_valeurs=afficher_valeurs, couleur_valeurs=couleur_valeurs , arrondi_valeurs=arrondi_valeurs, taille_valeurs=5*taille_valeurs, save_png = save_png)  # Supposant que generate_map retourne un objet Leaflet
     }
 
   }

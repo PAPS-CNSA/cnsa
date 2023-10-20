@@ -41,10 +41,12 @@ faire_une_carte <- function(table, type_output = "image", region_concernee = "FR
 
     france_sf <- carte_restreindre_base(france_sf, region_concernee) # On restreint la base aux régions souhaitées
 
-    france_sf$VALEUR <- transformer_variable(france_sf$VALEUR, type_var_souhait, classes_souh) # On transforme en classe
-    palette_couleur <- creer_palette(france_sf$VALEUR, type_palette) # Et on crée la palette de couleurs
+    france_sf$VALEUR_CLASSE <- transformer_variable(france_sf$VALEUR, type_var_souhait, classes_souh) # On transforme en classe
+    palette_couleur <- creer_palette(france_sf$VALEUR_CLASSE, type_palette) # Et on crée la palette de couleurs
+
 
     if (type_output == "image") {
+
       if (region_concernee == "FRANCEENTIERE") {
         creer_toutes_cartes(france_sf, palette = palette_couleur, titre_legende = titre_legende, regions_selectionnees = region_concernee, afficher_valeurs = afficher_valeurs, couleur_valeurs = couleur_valeurs, arrondi_valeurs = arrondi_valeurs, taille_valeurs = taille_valeurs, afficher_legende = afficher_legende, save_png = TRUE)
         cumuler_cartes(chemin_sortie)
@@ -59,7 +61,15 @@ faire_une_carte <- function(table, type_output = "image", region_concernee = "FR
       }
 
     } else {
-      resultat <- creer_carte_indiv(donnees = france_sf, region = region_concernee, palette = palette_couleur, titre_legende = titre_legende, afficher_valeurs=afficher_valeurs, arrondi_valeurs = arrondi_valeurs, taille_valeurs = taille_valeurs, afficher_legende = afficher_legende, save_png = save_png )
+      if (length(region_concernee)>=2) {
+        resultat <- list()
+        for (reg in region_concernee) {
+          resultat[[reg]] <- creer_carte_indiv(donnees = france_sf, region = reg, palette = palette_couleur, titre_legende = titre_legende, afficher_valeurs=afficher_valeurs, arrondi_valeurs = arrondi_valeurs, taille_valeurs = taille_valeurs, afficher_legende = afficher_legende, save_png = save_png )
+        }
+      } else {
+        resultat <- creer_carte_indiv(donnees = france_sf, region = region_concernee, palette = palette_couleur, titre_legende = titre_legende, afficher_valeurs=afficher_valeurs, arrondi_valeurs = arrondi_valeurs, taille_valeurs = taille_valeurs, afficher_legende = afficher_legende, save_png = save_png )
+      }
+
       return(resultat)
     }
   }
