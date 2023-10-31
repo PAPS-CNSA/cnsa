@@ -74,7 +74,7 @@ creer_carte_indiv <- function(donnees, region = "FRANCEMETRO", palette, titre_le
       carte <- carte %>% addLegend(pal = palette, values = ~VALEUR_CLASSE, title = titre_legende, position = "bottomright")
     }
 
-    if (!all(is.na(carte))) {
+    if (!all(is.na(carte)) & save_png) {
       # Créez un nom de fichier basé sur la région (en supprimant les caractères non valides)
       file_name_html <- paste0("map_", gsub(" ", "_", gsub("/", "", region)), ".html")
       file_name_png <- paste0("map_", gsub(" ", "_", gsub("/", "", region)), ".png")
