@@ -12,6 +12,6 @@
 moyenne_filtree <- function(vecteur) {
   min_vecteur <- min(vecteur, na.rm = T)
   max_vecteur <- max(vecteur, na.rm = T)
-  moyenne <- (sum(vecteur)-min_vecteur-max_vecteur)/(sum(!is.na(vecteur))-2)
+  moyenne <- (sum(vecteur, na.rm = T)-min_vecteur-max_vecteur)/(sum(!is.na(vecteur))-2)
   return(moyenne)
 }

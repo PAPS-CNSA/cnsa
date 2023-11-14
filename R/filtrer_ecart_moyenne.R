@@ -29,26 +29,48 @@ filtrer_ecart_moyenne <- function(tableau, seuil_ecart=0.5, seuil_niveau = 100, 
 
   tableau <- tableau %>% ungroup()
 
+  # Un peu de gestion : on retient les noms des colonnes qui ne contiennent pas des valeurs à garder, plus le nom de toutes les colonnes
   premiere_colonne <- names(tableau)[1]
   a_enlever_complet <- c(premiere_colonne, "moyenne_f", "min_value", "max_value")
   noms_colonnes <- names(tableau)
 
+  # On sépare les lignes qui ont trop de NA des autres
   nb_annees <- dim(tableau)[2]-1
   tempo <- tableau %>%  mutate(concerne = (rowSums(is.na(.))/nb_annees)<seuil_na)
   concernes <- tempo[tempo$concerne,] %>% select(-concerne)
   non_concernes <- tempo[!tempo$concerne,] %>% select(-concerne)
 
-  if (dim(concernes)[1]>0) {
+  if (dim(concernes)[1]>0) { # Si on a des lignes qui n'ont pas trop de NA
     resultat_concernes <- concernes %>% rowwise() %>% mutate(
-      min_value = min(c_across(-all_of(premiere_colonne)), na.rm = T),
-      max_value = max(c_across(-all_of(premiere_colonne)), na.rm = T),
-      moyenne_f = moyenne_filtree(c_across(-all_of(c(premiere_colonne, "min_value","max_value"))))
-    ) %>%
-      mutate(across(-all_of(a_enlever_complet), ~ifelse(. > seuil_niveau & (. < (moyenne_f * (1-seuil_ecart)) | . > (moyenne_f * (1+seuil_ecart))), NA , .), .names= "outlier_ {.col}")) %>%
+      min_value = min(c_across(-all_of(premiere_colonne)), na.rm = T), # Calcul du min
+      max_value = max(c_across(-all_of(premiere_colonne)), na.rm = T), # Calcul du max
+      moyenne_f = moyenne_filtree(c_across(-all_of(c(premiere_colonne, "min_value","max_value")))) # Calcul de la moyenne sans le min et le max
+    )
+
+    # Sur cette base, on va reséparer le monde en deux, selon que la moyenne est inférieure ou supérieure au seuil
+
+    concernes_ycmoy <- resultat_concernes[resultat_concernes$moyenne_f > seuil_niveau,]
+    concernes_ncmoy <- resultat_concernes[resultat_concernes$moyenne_f <= seuil_niveau,]
+
+    if (dim(concernes_ycmoy)[1]>0) { # On vérifie qu'il y a des concernés pour tester les outliers
+      resultat_concernes_ycmoy <- concernes_ycmoy %>%
+      mutate(across(-all_of(a_enlever_complet), ~ifelse((. < (moyenne_f * (1-seuil_ecart)) | . > (moyenne_f * (1+seuil_ecart))), NA , .), .names= "outlier_ {.col}")) %>%
       select(all_of(premiere_colonne), starts_with("outlier")) %>%
       ungroup()
 
-    colnames(resultat_concernes) <- noms_colonnes
+      colnames(resultat_concernes_ycmoy) <- noms_colonnes
+
+      if (dim(concernes_ncmoy)[1]>0) {
+        resultat_concernes_ncmoy <- concernes_ncmoy %>% select(all_of(noms_colonnes))
+
+        resultat_concernes <- bind_rows(resultat_concernes_ycmoy, resultat_concernes_ncmoy)
+      } else {
+        resultat_concernes <- resultat_concernes_ycmoy
+      }
+    } else { # S'il n'y en a pas, on ne change rien
+      resultat_concernes <- concernes_ncmoy %>% select(all_of(noms_colonnes))
+    }
+
 
     if (dim(non_concernes)[1]>0) {
       resultat <- rbind(resultat_concernes, non_concernes)
