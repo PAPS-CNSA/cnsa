@@ -30,7 +30,8 @@ Imports:
     webshot,
     htmlwidgets,
     magick,
-    tidyr
+    tidyr,
+    lubridate
 Depends: 
     R (>= 2.10)
 LazyData: true

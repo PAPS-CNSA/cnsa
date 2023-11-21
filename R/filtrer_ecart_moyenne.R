@@ -12,8 +12,9 @@ NULL
 #' @param tableau Un tableau de paramètres
 #' @param seuil_ecart Le seuil de filtrage, en %. Par exemple, un seuil à 0.5 signifie qu'on va garder les valeurs qui sont à moins de 50% d'écart de la moyenne (c'est le seuil par défaut si rien n'est précisé)
 #' @param seuil_niveau le niveau à partir duquel on commence une correction. Par défaut égal à 100 : cela signifie que si la moyenne est inférieure à 100, on ne fait rien
-#' @param seuil_na s'il y a trop de valeurs en NA dans la ligne, on préfère ne pas calculer la moyenne, et donc ne pas faire de correction (car la moyenne ne veut rien dire). Ce paramètre permet de fixer un seuil (par défaut, 50% : s'il manque plus de 50% de valeurs sur la ligne, on ne change rien). Ce seuil doit être défini en fonction du nombre de valeurs probablement
+#' @param seuil_na s'il y a trop de valeurs en NA dans la ligne, on préfère ne pas calculer la moyenne, et donc ne pas faire de correction (car la moyenne ne veut rien dire). Ce paramètre permet de fixer un seuil (par défaut, 50% : s'il manque plus de 50% de valeurs sur la ligne, on ne change rien). Ce seuil doit être défini en fonction du nombre de valeurs probablement. A noter qu'il faut le comprendre de la façon suivante : si, sur une ligne, la part des valeurs NA est supérieure au seuil, alors on ne fait rien
 #' @param affichage booléen qui indique si on veut afficher un diagnostic ou non
+#' @param seuil_ecart_m100 seuil d'écart en pourcentage pour les valeurs inférieures à 100
 #'
 #' @return le même tableau, mais filtré
 #'
@@ -22,7 +23,7 @@ NULL
 
 
 
-filtrer_ecart_moyenne <- function(tableau, seuil_ecart=0.5, seuil_niveau = 100, seuil_na = 0.5, affichage = FALSE) {
+filtrer_ecart_moyenne <- function(tableau, seuil_ecart=0.5, seuil_niveau = 100, seuil_na = 0.5, affichage = FALSE, seuil_ecart_m100 =  10) {
   # Cette fonction prend en entrée un tableau de données sous format : première colonne = variable identifiante ; colonnes suivantes = période temporelle
   # Et uniquement cela
   # On fournit alors un seuil, et cette fonction filtre les valeurs qui s'écartent de la moyenne de la ligne, hors valeur extrême, de plus de seuil%
@@ -36,7 +37,7 @@ filtrer_ecart_moyenne <- function(tableau, seuil_ecart=0.5, seuil_niveau = 100, 
 
   # On sépare les lignes qui ont trop de NA des autres
   nb_annees <- dim(tableau)[2]-1
-  tempo <- tableau %>%  mutate(concerne = (rowSums(is.na(.))/nb_annees)<seuil_na)
+  tempo <- tableau %>%  mutate(concerne = (rowSums(is.na(.))/nb_annees<seuil_na))
   concernes <- tempo[tempo$concerne,] %>% select(-concerne)
   non_concernes <- tempo[!tempo$concerne,] %>% select(-concerne)
 
@@ -44,31 +45,47 @@ filtrer_ecart_moyenne <- function(tableau, seuil_ecart=0.5, seuil_niveau = 100, 
     resultat_concernes <- concernes %>% rowwise() %>% mutate(
       min_value = min(c_across(-all_of(premiere_colonne)), na.rm = T), # Calcul du min
       max_value = max(c_across(-all_of(premiere_colonne)), na.rm = T), # Calcul du max
-      moyenne_f = moyenne_filtree(c_across(-all_of(c(premiere_colonne, "min_value","max_value")))) # Calcul de la moyenne sans le min et le max
+      moyenne_f = max( # On choisit la moyenne la plus élevée entre la moyenne filtrée (l'idéal) et la moyenne non filtrée (si moyenne filtré vaut NA, soit 0)
+        moyenne_filtree(c_across(-all_of(c(premiere_colonne, "min_value","max_value")))), # Calcul de la moyenne sans le min et le max
+        mean(c_across(-all_of(premiere_colonne)), na.rm = F), na.rm = T
+      )
     )
 
     # Sur cette base, on va reséparer le monde en deux, selon que la moyenne est inférieure ou supérieure au seuil
 
-    concernes_ycmoy <- resultat_concernes[resultat_concernes$moyenne_f > seuil_niveau,]
-    concernes_ncmoy <- resultat_concernes[resultat_concernes$moyenne_f <= seuil_niveau,]
+    concernes_p100 <- resultat_concernes[resultat_concernes$moyenne_f > seuil_niveau,]
+    concernes_m100 <- resultat_concernes[resultat_concernes$moyenne_f <= seuil_niveau,]
 
-    if (dim(concernes_ycmoy)[1]>0) { # On vérifie qu'il y a des concernés pour tester les outliers
-      resultat_concernes_ycmoy <- concernes_ycmoy %>%
+    if (dim(concernes_p100)[1]>0) { # On commence par traiter le cas des lignes où la moyenne est supérieure à 100
+      resultat_concernes_p100 <- concernes_p100 %>%
       mutate(across(-all_of(a_enlever_complet), ~ifelse((. < (moyenne_f * (1-seuil_ecart)) | . > (moyenne_f * (1+seuil_ecart))), NA , .), .names= "outlier_ {.col}")) %>%
       select(all_of(premiere_colonne), starts_with("outlier")) %>%
       ungroup()
 
-      colnames(resultat_concernes_ycmoy) <- noms_colonnes
+      colnames(resultat_concernes_p100) <- noms_colonnes
+    } else {
+      resultat_concernes_p100 <- concernes_p100  %>% select(all_of(noms_colonnes))
+    }
 
-      if (dim(concernes_ncmoy)[1]>0) {
-        resultat_concernes_ncmoy <- concernes_ncmoy %>% select(all_of(noms_colonnes))
+    if (dim(concernes_m100)[1]>0) { # Même chose ensuite pour les moins de 100
+      resultat_concernes_m100 <- concernes_m100 %>%
+        mutate(across(-all_of(a_enlever_complet), ~ifelse((. < (moyenne_f * (1-seuil_ecart_m100)) | . > (moyenne_f * (1+seuil_ecart_m100))), NA , .), .names= "outlier_ {.col}")) %>%
+        select(all_of(premiere_colonne), starts_with("outlier")) %>%
+        ungroup()
 
-        resultat_concernes <- bind_rows(resultat_concernes_ycmoy, resultat_concernes_ncmoy)
+      colnames(resultat_concernes_m100) <- noms_colonnes
+    } else {
+      resultat_concernes_m100 <- concernes_m100  %>% select(all_of(noms_colonnes))
+    }
+
+    if (dim(concernes_p100)[1]>0) {
+      if (dim(concernes_m100)[1]>0) {
+        resultat_concernes <- bind_rows(resultat_concernes_p100, resultat_concernes_m100)
       } else {
-        resultat_concernes <- resultat_concernes_ycmoy
+        resultat_concernes <- resultat_concernes_p100
       }
-    } else { # S'il n'y en a pas, on ne change rien
-      resultat_concernes <- concernes_ncmoy %>% select(all_of(noms_colonnes))
+    } else {
+      resultat_concernes <- resultat_concernes_m100
     }
 
 

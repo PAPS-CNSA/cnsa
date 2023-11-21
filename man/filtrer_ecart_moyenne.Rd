@@ -9,7 +9,8 @@ filtrer_ecart_moyenne(
   seuil_ecart = 0.5,
   seuil_niveau = 100,
   seuil_na = 0.5,
-  affichage = FALSE
+  affichage = FALSE,
+  seuil_ecart_m100 = 10
 )
 }
 \arguments{
@@ -19,9 +20,11 @@ filtrer_ecart_moyenne(
 
 \item{seuil_niveau}{le niveau à partir duquel on commence une correction. Par défaut égal à 100 : cela signifie que si la moyenne est inférieure à 100, on ne fait rien}
 
-\item{seuil_na}{s'il y a trop de valeurs en NA dans la ligne, on préfère ne pas calculer la moyenne, et donc ne pas faire de correction (car la moyenne ne veut rien dire). Ce paramètre permet de fixer un seuil (par défaut, 50\% : s'il manque plus de 50\% de valeurs sur la ligne, on ne change rien). Ce seuil doit être défini en fonction du nombre de valeurs probablement}
+\item{seuil_na}{s'il y a trop de valeurs en NA dans la ligne, on préfère ne pas calculer la moyenne, et donc ne pas faire de correction (car la moyenne ne veut rien dire). Ce paramètre permet de fixer un seuil (par défaut, 50\% : s'il manque plus de 50\% de valeurs sur la ligne, on ne change rien). Ce seuil doit être défini en fonction du nombre de valeurs probablement. A noter qu'il faut le comprendre de la façon suivante : si, sur une ligne, la part des valeurs NA est supérieure au seuil, alors on ne fait rien}
 
 \item{affichage}{booléen qui indique si on veut afficher un diagnostic ou non}
+
+\item{seuil_ecart_m100}{seuil d'écart en pourcentage pour les valeurs inférieures à 100}
 }
 \value{
 le même tableau, mais filtré

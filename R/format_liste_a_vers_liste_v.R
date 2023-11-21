@@ -18,23 +18,19 @@ format_liste_a_vers_liste_v <- function(liste_annees) {
   # Mettre chaque dataframe en format long
   long_annees <- lapply(names(liste_annees), function(year) {
     nom_colonnes_id <- names(liste_annees[[year]])[1]
-    liste_annees[[year]] %>%
-      gather(key = "variable", value = "value", -!!(nom_colonnes_id)) %>%
-      mutate(ANNEE = year)
+    liste_annees[[year]] %>% gather(key = "variable", value = "value",
+                                    -!!(nom_colonnes_id)) %>% mutate(ANNEE = year) %>% mutate(value = as.numeric(value))
   }) %>% bind_rows()
-
-  # Pivoter les données pour obtenir une liste où chaque élément représente une variable
-  result <- long_annees %>%
-    group_by(variable) %>%
-    group_split()
-
+  result <- long_annees %>% group_by(variable) %>% group_split()
   result <- lapply(result, function(df) {
-    df %>%
-      select(-variable) %>%
-      spread(key = "ANNEE", value = value)
+    df %>% spread(key = "ANNEE", value = value)
   })
-
-  # Nommer la liste d'après les variables
-  names(result) <- unique(long_annees$variable)
+  for (i in seq_along(result)) {
+    # Extraire la modalité de la colonne "variable"
+    nom_var <- unique(result[[i]]$variable)
+    result[[i]] <- result[[i]] %>% select(-variable)
+    # Renommer le dataframe avec la modalité
+    names(result)[i] <- as.character(nom_var)
+  }
   return(result)
 }
