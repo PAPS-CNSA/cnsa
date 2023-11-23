@@ -19,6 +19,7 @@ creer_reference_finess <- function() {
     finess <- base_finess_reduite[[as.numeric(annee)]]
     tempo <- structurer_donnees_finess(finess)
     tempo$categetab <- as.character(tempo$categetab)
+    tempo <- tempo %>% rename(FINESS = nofinesset)
     resultat[[annee]] <- tempo
     if (annee == annees_finess[1]) { # On créee une base complète avec la dernière version de chaque Finess
       base_full = tempo

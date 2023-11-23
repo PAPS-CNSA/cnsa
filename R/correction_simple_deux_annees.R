@@ -32,13 +32,13 @@ correction_simple_deux_annees <- function(tablo, ordre = TRUE) {
     # Dans l'ordre, cela fait dire qu'on redresse la deuxième colonne à partir de la première
     a_redresser = !is.na(tablo[, nom1]) & is.na(tablo[, nom2])
     taux_croissance <- sum(tablo[cylindre, nom2])/sum(tablo[cylindre, nom1]) - 1
-    tablo[a_redresser, nom2] <- tablo[a_redresser, nom1] * (1 + taux_croissance)
+    if (!is.nan(taux_croissance)) tablo[a_redresser, nom2] <- tablo[a_redresser, nom1] * (1 + taux_croissance)
     return(tablo[, nom2])
   } else {
     # Dans le désordre, c'est l'inverse : première colonne à partir de la deuxième
     a_redresser = !is.na(tablo[, nom2]) & is.na(tablo[, nom1])
     taux_croissance <- sum(tablo[cylindre, nom1])/sum(tablo[cylindre, nom2]) - 1
-    tablo[a_redresser, nom1] <- tablo[a_redresser, nom2] * (1 + taux_croissance)
+    if (!is.nan(taux_croissance)) tablo[a_redresser, nom1] <- tablo[a_redresser, nom2] * (1 + taux_croissance)
     return(tablo[, nom1])
   }
 }
