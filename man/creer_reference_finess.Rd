@@ -4,7 +4,7 @@
 \alias{creer_reference_finess}
 \title{Créer référence finess}
 \usage{
-creer_reference_finess()
+creer_reference_finess(origine = "GEOD")
 }
 \value{
 une liste d'années + un élément synthèse avec une valeur de référence pour chaque

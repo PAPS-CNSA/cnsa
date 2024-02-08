@@ -54,7 +54,7 @@ imputation_taux_croissance <- function(tablo, table_reference = NA, variable_gro
   variables_temporelles <- names(tablo)[2:dim(tablo)[2]]
 
   besoin_regroupement <- 0
-  if ((dim(table_reference)[2]>0) & sum(!is.na(variable_groupe))>0) {
+  if ((dim(table_reference)[2]>0) && sum(!is.na(variable_groupe))>0) {
     besoin_regroupement <- 1
     table_complete <- tablo %>% left_join(table_reference[,c(variable_identifiante, variable_groupe)], by = variable_identifiante)
     # On remet dans l'ordre les colonnes du tableau
@@ -66,8 +66,16 @@ imputation_taux_croissance <- function(tablo, table_reference = NA, variable_gro
   # Sens chronologique
   if (besoin_regroupement == 1) {
     for (j in (1:dim(combinaisons_existantes)[1])) {
-      tablo_de_travail <- tablo %>% left_join(table_reference[,c(variable_identifiante, variable_groupe)], by = variable_identifiante) %>%
-        semi_join(combinaisons_existantes[j,], by = variable_groupe) %>% select(-all_of(variable_groupe))
+      if (dim(combinaisons_existantes)[2] == 1) { # Si on a une seule variable de groupe
+      tablo_de_travail <- tablo %>% left_join(table_reference[,c(variable_identifiante, variable_groupe)], by = variable_identifiante) %>% 
+        filter(!!sym(variable_groupe) == combinaisons_existantes[j,]) %>% 
+        select(-all_of(variable_groupe))
+      } else {
+        tablo_de_travail <- tablo %>% left_join(table_reference[,c(variable_identifiante, variable_groupe)], by = variable_identifiante) %>% 
+          semi_join(combinaisons_existantes[j,], by = variable_groupe) %>% 
+          select(-all_of(variable_groupe))
+      }
+      
       for (i in (2:(nombre_colonnes-1))) {
         # On suppose que le tableau est sous la forme "numéro du département puis colonnes d'années"
         tablo_de_travail[,i+1] = correction_simple_deux_annees(tablo_de_travail[,i:(i+1)] , TRUE)
@@ -94,11 +102,17 @@ imputation_taux_croissance <- function(tablo, table_reference = NA, variable_gro
   # Sens antéchronologique
 
   if (besoin_regroupement == 1) {
-
     # Sens chronologique
     for (j in (1:dim(combinaisons_existantes)[1])) {
-      tablo_de_travail <- tablo %>% left_join(table_reference[,c(variable_identifiante, variable_groupe)], by = variable_identifiante) %>%
+      if (dim(combinaisons_existantes)[2] == 1) { # Si on a une seule variable de groupe 
+        tablo_de_travail <- tablo %>% left_join(table_reference[,c(variable_identifiante, variable_groupe)], by = variable_identifiante) %>% 
+                filter(!!sym(variable_groupe) == combinaisons_existantes[j,]) %>% 
+                select(-all_of(variable_groupe))
+      } else {
+        tablo_de_travail <- tablo %>% left_join(table_reference[,c(variable_identifiante, variable_groupe)], by = variable_identifiante) %>%
         semi_join(combinaisons_existantes[j,], by = variable_groupe) %>% select(-all_of(variable_groupe))
+      }
+      
       for (i in (nombre_colonnes - 1) : (2) ) {
         # On suppose que le tableau est sous la forme "numéro du département puis colonnes d'années"
         tablo_de_travail[,i] = correction_simple_deux_annees(tablo_de_travail[,i:(i+1)] , FALSE)

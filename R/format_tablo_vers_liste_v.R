@@ -33,12 +33,12 @@ format_tablo_vers_liste_v <- function(tablo, variable_ident = "DEPARTEMENT") {
   }
 
   # Création d'une liste de tableaux élargis pour chaque variable
-  liste_variables <- lapply(names(tablo)[3:ncol(tablo)], function(var_name) {
+  liste_variables <- lapply(names(tablo %>% select(-all_of(c("ANNEE", variable_ident)))), function(var_name) {
     widen_data_by_variable(tablo, var_name)
   })
 
   # Nommer la liste d'après les noms des variables
-  names(liste_variables) <- names(tablo)[3:ncol(tablo)]
+  names(liste_variables) <- names(tablo %>% select(-all_of(c("ANNEE", variable_ident))))
 
   return(liste_variables)
 }
