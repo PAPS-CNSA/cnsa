@@ -43,7 +43,13 @@ creer_carte_indiv <- function(donnees, region = "FRANCEMETRO", palette, titre_le
           label = ~lapply(
             paste0(
               NOM_DEP, " : ",
-              "<b>", format(VALEUR, big.mark = " ", decimal.mark = ",", scientific = FALSE), "</b>"
+              "<b>",
+              ifelse(
+                is.na(VALEUR),
+                "Non renseign\u00e9",
+                format(VALEUR, big.mark = " ", decimal.mark = ",", scientific = FALSE)
+              ),
+              "</b>"
             ),
             HTML
           ),
@@ -57,9 +63,10 @@ creer_carte_indiv <- function(donnees, region = "FRANCEMETRO", palette, titre_le
           pal = palette,
           values = ~VALEUR,
           title = "",
-          position = "topright"
+          position = "topright",
+          na.label = "Non renseign\u00e9"
         ) %>%
-        setMapWidgetStyle(list(background= "white"))
+        setMapWidgetStyle(list(background = "white"))
     } else {
       carte <- leaflet(data) %>%
         addPolygons(
@@ -70,7 +77,13 @@ creer_carte_indiv <- function(donnees, region = "FRANCEMETRO", palette, titre_le
           label = ~lapply(
             paste0(
               NOM_DEP, " : ",
-              "<b>", format(VALEUR, big.mark = " ", decimal.mark = ",", scientific = FALSE), "</b>"
+              "<b>",
+              ifelse(
+                is.na(VALEUR),
+                "Non renseign\u00e9",
+                format(VALEUR, big.mark = " ", decimal.mark = ",", scientific = FALSE)
+              ),
+              "</b>"
             ),
             HTML
           ),
@@ -84,7 +97,8 @@ creer_carte_indiv <- function(donnees, region = "FRANCEMETRO", palette, titre_le
           pal = palette,
           values = ~as.factor(VALEUR_CLASSE),
           title = "",
-          position = "topright"
+          position = "topright",
+          na.label = "Non renseign\u00e9"
         )  %>%
         setMapWidgetStyle(list(background= "white"))
     }
