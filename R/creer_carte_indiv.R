@@ -4,6 +4,7 @@
 #' @importFrom leaflet.extras setMapWidgetStyle
 #' @importFrom webshot webshot
 #' @importFrom htmlwidgets saveWidget
+#' @importFrom htmltools HTML
 NULL
 
 #' Creer carte individuelle
@@ -42,7 +43,7 @@ creer_carte_indiv <- function(donnees, region = "FRANCEMETRO", palette, titre_le
           weight = 1,
           label = ~lapply(
             paste0(
-              NOM_DEP, " : ",
+              nom, " : ",
               "<b>",
               ifelse(
                 is.na(VALEUR),
@@ -76,7 +77,7 @@ creer_carte_indiv <- function(donnees, region = "FRANCEMETRO", palette, titre_le
           weight = 1,
           label = ~lapply(
             paste0(
-              NOM_DEP, " : ",
+              nom, " : ",
               "<b>",
               ifelse(
                 is.na(VALEUR),
@@ -113,10 +114,14 @@ creer_carte_indiv <- function(donnees, region = "FRANCEMETRO", palette, titre_le
       }
 
       carte <- carte %>%
-        addLabelOnlyMarkers(data = centroids,
-                            label = ~label_values,
-                            labelOptions = labelOptions(style = list("font-size"=paste0(taille_valeurs, "vw"), color = couleur_valeurs),
-                                                        noHide = T, direction = "center", textOnly = TRUE, offset=c(0,0)))
+        addLabelOnlyMarkers(
+          data = centroids,
+          label = ~label_values,
+          labelOptions = labelOptions(
+            style = list("font-size"=paste0(taille_valeurs, "vw"), color = couleur_valeurs),
+            noHide = T, direction = "center", textOnly = TRUE, offset=c(0,0)
+          )
+        )
     }
 
     if (afficher_legende) {
