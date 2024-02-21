@@ -4,7 +4,7 @@
 \alias{enlever_valeurs_extremes}
 \title{Enlève les valeurs extrêmes de chaque colonne numérique d'un tableau}
 \usage{
-enlever_valeurs_extremes(tableau, p_min, p_max)
+enlever_valeurs_extremes(tableau, p_min = 0.01, p_max = 0.99)
 }
 \arguments{
 \item{tableau}{Un dataframe contenant les données.}

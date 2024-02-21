@@ -67,8 +67,9 @@ structurer_donnees_finess <- function(base, champ_pa = c(202,207,500,501,502)) {
   # Renommer les colonnes HP et HT en capinsHP et capinsHT respectivement
   output <- base_ref %>% left_join(base_calc, by = "nofinesset") %>%
     select("cog", "nofinesset", "region", "departement", "categetab", "statutjuridique", "statut_jur_agrege", "mft", "dateouvert", "HP", "HT", "AJ", "AN", "AT","F1", "F2", "F1b", "capinsTOT") %>%
-    rename(capinsHP = HP, capinsHT = HT, capinsAJ = AJ, capinsAN = AN, capinsAT = AT) %>%
-    mutate(anneeouvert = year(dateouvert))
+    rename(capinsHP = HP, capinsHT = HT, capinsAJ = AJ, capinsAN = AN, capinsAT = AT)
+  # %>%
+  #   mutate(anneeouvert = year(dateouvert))
 
   output <-data.frame(output)
 
