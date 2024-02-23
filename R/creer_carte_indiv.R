@@ -4,6 +4,7 @@
 #' @importFrom leaflet.extras setMapWidgetStyle
 #' @importFrom webshot webshot
 #' @importFrom htmlwidgets saveWidget
+#' @importFrom htmltools HTML
 NULL
 
 #' Creer carte individuelle
@@ -24,7 +25,6 @@ NULL
 #' @return une carte format leaflet
 #' @export
 #'
-
 creer_carte_indiv <- function(donnees, region = "FRANCEMETRO", palette, titre_legende = "Legende", afficher_valeurs = FALSE, couleur_valeurs = "black", arrondi_valeurs = NA, taille_valeurs = 2, afficher_legende=FALSE, save_png = FALSE) {
   # Fonction qui créée une carte pour une région donnée, avec une palette déjà prédéfinie
   data <- carte_restreindre_base(donnees,region)
@@ -40,17 +40,67 @@ creer_carte_indiv <- function(donnees, region = "FRANCEMETRO", palette, titre_le
           fillColor = ~palette(VALEUR),
           fillOpacity = 0.8,
           color = "white",
-          weight = 1
+          weight = 1,
+          label = ~lapply(
+            paste0(
+              nom, " : ",
+              "<b>",
+              ifelse(
+                is.na(VALEUR),
+                "Non renseign\u00e9",
+                format(VALEUR, big.mark = " ", decimal.mark = ",", scientific = FALSE)
+              ),
+              "</b>"
+            ),
+            HTML
+          ),
+          labelOptions = labelOptions(
+            style = list(padding = "3px 8px"),
+            textsize = "16px",
+            direction = "auto"
+          )
         ) %>%
-        setMapWidgetStyle(list(background= "white"))
+        addLegend(
+          pal = palette,
+          values = ~VALEUR,
+          title = "",
+          position = "topright",
+          na.label = "Non renseign\u00e9"
+        ) %>%
+        setMapWidgetStyle(list(background = "white"))
     } else {
       carte <- leaflet(data) %>%
         addPolygons(
           fillColor = ~palette(as.factor(VALEUR_CLASSE)),
           fillOpacity = 0.8,
           color = "white",
-          weight = 1
+          weight = 1,
+          label = ~lapply(
+            paste0(
+              nom, " : ",
+              "<b>",
+              ifelse(
+                is.na(VALEUR),
+                "Non renseign\u00e9",
+                format(VALEUR, big.mark = " ", decimal.mark = ",", scientific = FALSE)
+              ),
+              "</b>"
+            ),
+            HTML
+          ),
+          labelOptions = labelOptions(
+            style = list(padding = "3px 8px"),
+            textsize = "16px",
+            direction = "auto"
+          )
         ) %>%
+        addLegend(
+          pal = palette,
+          values = ~as.factor(VALEUR_CLASSE),
+          title = "",
+          position = "topright",
+          na.label = "Non renseign\u00e9"
+        )  %>%
         setMapWidgetStyle(list(background= "white"))
     }
 
@@ -64,10 +114,14 @@ creer_carte_indiv <- function(donnees, region = "FRANCEMETRO", palette, titre_le
       }
 
       carte <- carte %>%
-        addLabelOnlyMarkers(data = centroids,
-                            label = ~label_values,
-                            labelOptions = labelOptions(style = list("font-size"=paste0(taille_valeurs, "vw"), color = couleur_valeurs),
-                                                        noHide = T, direction = "center", textOnly = TRUE, offset=c(0,0)))
+        addLabelOnlyMarkers(
+          data = centroids,
+          label = ~label_values,
+          labelOptions = labelOptions(
+            style = list("font-size"=paste0(taille_valeurs, "vw"), color = couleur_valeurs),
+            noHide = T, direction = "center", textOnly = TRUE, offset=c(0,0)
+          )
+        )
     }
 
     if (afficher_legende) {

@@ -33,7 +33,8 @@ Imports:
     tidyr,
     lubridate,
     purrr,
-    fitdistrplus
+    fitdistrplus,
+    htmltools
 Depends: 
     R (>= 2.10)
 LazyData: true

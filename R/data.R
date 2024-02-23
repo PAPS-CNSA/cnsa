@@ -10,3 +10,12 @@
 #' \item{geometry}{les coordonnées du polygone}
 #' }
 "france_shapefile"
+
+
+#' Carte de France métropolitaine + DOM
+#'
+#'
+#' @format
+#' A data frame with 101 rows and 3 columns
+#' @source Package CARTElette
+"france_depdom"
