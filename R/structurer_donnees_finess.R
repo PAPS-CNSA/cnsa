@@ -14,22 +14,33 @@ NULL
 #' @export
 
 
-structurer_donnees_finess <- function(base, champ_pa = c(202,207,500,501,502)) {
+structurer_donnees_finess <- function(base) {
   #Changer certains codes geo cog dans FINESS puor harmoniser avec table insee et recupérer STATUT
   base[(base$departement=='75'),]$cog <- '75056'
   base[(base$cog %in% c('69025','69381','69382','69383','69384','69385','69386','69387','69387','69388','69389')),]$cog <- '69123'
   base[(base$cog %in% c('13201','13202','13203','13204','13205','13206','13207','13208','13209','13210','13211','13212','13213','13214','13215','13216')),]$cog <- '13055'
 
+  #Charger la table de correspondance categorie
+  #Attention la catégorie 362 - ESLD est une catégorie sanitaire nb de places = NA
+  fichier_a_charger <- paste("corresp_categorie_complete.csv", sep ='')
+  corresp_categorie <- read_delim(fichier_a_charger, delim = ";")
+  
+  # Merger la table categorie avec la base chargee finess
+  base <- base %>% 
+    left_join(corresp_categorie, by = c("categetab" = "categorie"))
+  
   base_ref <- base %>%
-    select("cog", "nofinesset", "region", "departement", "categetab", "statutjuridique", "statut", "mft", "dateouvert") %>%
+    select("cog", "region", "departement", "code_domaine",	"libelle_domaine",	"type_esms", "nofinesset", "categetab",
+           "libelle_categorie_court", "libelle_categorie_regroup",	"financeur", "statutjuridique", "statut", "mft", "dateouvert") %>%
     group_by(nofinesset) %>%
     filter(row_number()==1) %>%
     rename(statut_jur_agrege = statut) %>%
     ungroup()
 
+
   # sommmer les capinstot par type d'hébergement pour le champ PA
   base_pa <- base %>%
-    filter(categetab %in% champ_pa, indsupinst == "N")
+    filter(code_domaine == 3, indsupinst == "N") 
 
   base_calc_pa_heb <- base_pa %>%
     group_by(nofinesset, hebergement) %>%
@@ -49,9 +60,9 @@ structurer_donnees_finess <- function(base, champ_pa = c(202,207,500,501,502)) {
   # Joindre les deux bases de données
   base_calc_pa <- left_join(base_calc_pa_heb, base_calc_pa_tot, by = "nofinesset")
 
-  # sommmer les capinstot pour le champ PH
+  # sommmer les capinstot pour le champ PH et multiclientèles
   base_ph <- base %>%
-    filter(!(categetab %in% champ_pa), indsupinst == "N")
+    filter(code_domaine %in% c(1,2,4) & indsupinst == "N")
 
   base_calc_ph <- base_ph %>%
     group_by(nofinesset) %>%
@@ -66,7 +77,8 @@ structurer_donnees_finess <- function(base, champ_pa = c(202,207,500,501,502)) {
 
   # Renommer les colonnes HP et HT en capinsHP et capinsHT respectivement
   output <- base_ref %>% left_join(base_calc, by = "nofinesset") %>%
-    select("cog", "nofinesset", "region", "departement", "categetab", "statutjuridique", "statut_jur_agrege", "mft", "dateouvert", "HP", "HT", "AJ", "AN", "AT","F1", "F2", "F1b", "capinsTOT") %>%
+    select("region", "departement", "cog", "code_domaine", "libelle_domaine",	"type_esms", "nofinesset", "categetab",	"libelle_categorie_court", "libelle_categorie_regroup",	"financeur",
+             "statutjuridique", "statut_jur_agrege", "mft", "dateouvert", "HP", "HT", "AJ", "AN", "AT","F1", "F2", "F1b", "capinsTOT") %>%
     rename(capinsHP = HP, capinsHT = HT, capinsAJ = AJ, capinsAN = AN, capinsAT = AT)
   # %>%
   #   mutate(anneeouvert = year(dateouvert))
