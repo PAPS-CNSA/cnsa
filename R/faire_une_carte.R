@@ -53,7 +53,7 @@ faire_une_carte <- function(table,
                             couleur_valeurs = "black",
                             arrondi_valeurs = NA,
                             taille_valeurs = 2,
-                            afficher_legende = FALSE,
+                            afficher_legende = TRUE,
                             save_png = FALSE) {
   # Cette fonction fait une carte ! En entrée, il faut juste :
   # - les données à cartographier
@@ -71,8 +71,15 @@ faire_une_carte <- function(table,
 
     # france_sf <- carte_restreindre_base(france_sf, region_concernee) # On restreint la base aux régions souhaitées
 
-    france_sf$VALEUR_CLASSE <- transformer_variable(france_sf$VALEUR, type_var_souhait, classes_souh) # On transforme en classe
-    palette_couleur <- creer_palette(france_sf$VALEUR_CLASSE, type_palette) # Et on crée la palette de couleurs
+    france_sf$VALEUR_CLASSE <- transformer_variable(
+      france_sf$VALEUR,
+      type_var_souhait,
+      classes_souh
+    ) # On transforme en classe
+    palette_couleur <- creer_palette(
+      france_sf$VALEUR_CLASSE,
+      type_palette
+    ) # Et on crée la palette de couleurs
 
 
     if (type_output == "image") {

@@ -60,14 +60,17 @@ creer_carte_indiv <- function(donnees, region = "FRANCEMETRO", palette, titre_le
             direction = "auto"
           )
         ) %>%
-        addLegend(
-          pal = palette,
-          values = ~VALEUR,
-          title = "",
-          position = "topright",
-          na.label = "Non renseign\u00e9"
-        ) %>%
         setMapWidgetStyle(list(background = "white"))
+      if (afficher_legende) {
+        carte <- carte %>%
+          addLegend(
+            pal = palette,
+            values = ~VALEUR,
+            title = "",
+            position = "topright",
+            na.label = "Non renseign\u00e9"
+          )
+      }
     } else {
       carte <- leaflet(data) %>%
         addPolygons(
@@ -94,14 +97,17 @@ creer_carte_indiv <- function(donnees, region = "FRANCEMETRO", palette, titre_le
             direction = "auto"
           )
         ) %>%
-        addLegend(
-          pal = palette,
-          values = ~as.factor(VALEUR_CLASSE),
-          title = "",
-          position = "topright",
-          na.label = "Non renseign\u00e9"
-        )  %>%
         setMapWidgetStyle(list(background= "white"))
+      if (afficher_legende) {
+        carte <- carte %>%
+          addLegend(
+            pal = palette,
+            values = ~as.factor(VALEUR_CLASSE),
+            title = "",
+            position = "topright",
+            na.label = "Non renseign\u00e9"
+          )
+      }
     }
 
     if (afficher_valeurs) { # Cas où on souhaite afficher les valeurs sur la carte
@@ -124,9 +130,6 @@ creer_carte_indiv <- function(donnees, region = "FRANCEMETRO", palette, titre_le
         )
     }
 
-    if (afficher_legende) {
-      carte <- carte %>% addLegend(pal = palette, values = ~VALEUR_CLASSE, title = titre_legende, position = "bottomright")
-    }
 
     if (!all(is.na(carte)) & save_png) {
       # Créez un nom de fichier basé sur la région (en supprimant les caractères non valides)

@@ -17,7 +17,7 @@ faire_une_carte(
   couleur_valeurs = "black",
   arrondi_valeurs = NA,
   taille_valeurs = 2,
-  afficher_legende = FALSE,
+  afficher_legende = TRUE,
   save_png = FALSE
 )
 }
