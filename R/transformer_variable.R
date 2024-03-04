@@ -5,12 +5,22 @@
 #' @param variable_entree vecteur au format idéalement numérique
 #' @param type_souhaite type de sortie souhaité de la variable. Par défaut "CAT_AUTO", c'est à dire variable catégorielle avec des seuils calculés automatiquement
 #' @param classes_souhaitees Nombre de classes souhaitées (si on est dans de l'auto) ou vecteur de classes (si on est dans du manuel)
+#' @param formatter_valeurs Fonction pour formatter les libellés
 #'
 #' @return une variable modifiée pour devenir catégorielle (a priori)
 #'
 #' @export
-transformer_variable <- function(variable_entree, type_souhaite = "CAT_AUTO", classes_souhaitees = 5) {
+transformer_variable <- function(variable_entree,
+                                 type_souhaite = "CAT_AUTO",
+                                 classes_souhaitees = 5,
+                                 formatter_valeurs = NULL) {
   # Cette fonction transforme une variable discrète en variable catégorielle, si souhaité
+
+  if (is.null(formatter_valeurs)) {
+    formatter_valeurs <- function(x) {
+      format(x, scientific = FALSE, big.mark = " ", dec = ",", trim = TRUE)
+    }
+  }
 
   if (type_souhaite == "CAT_AUTO") {
     if (is.numeric(variable_entree)) {
@@ -18,7 +28,7 @@ transformer_variable <- function(variable_entree, type_souhaite = "CAT_AUTO", cl
 
       # On fait de jolis breaks
       breaks_pretty <- pretty(variable_entree, n = classes_souhaitees)
-      formatted_breaks <- format(breaks_pretty, scientific = FALSE, big.mark = " ", trim = TRUE)
+      formatted_breaks <- formatter_valeurs(breaks_pretty)
 
       # On découpe en classes
       variable_cat <- cut(

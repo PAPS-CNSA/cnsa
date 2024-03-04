@@ -18,6 +18,10 @@ faire_une_carte(
   arrondi_valeurs = NA,
   taille_valeurs = 2,
   afficher_legende = TRUE,
+  formatter_valeurs = function(x) {
+     format(x, big.mark = " ", decimal.mark = ",",
+    scientific = FALSE)
+ },
   save_png = FALSE
 )
 }
@@ -47,6 +51,8 @@ faire_une_carte(
 \item{taille_valeurs}{taille des valeurs affichées, en pourcentage de la hauteur de la carte. Par défaut, 2 (pour 2\%)}
 
 \item{afficher_legende}{affiche, ou non, la légende à côté de la carte}
+
+\item{formatter_valeurs}{Fonction pour formatter les valeurs affichées dans la légende et le tooltip.}
 
 \item{save_png}{TRUE ou FALSE, selon qu'on souhaite ou non sauver un png avec l'image}
 }

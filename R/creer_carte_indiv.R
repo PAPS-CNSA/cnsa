@@ -20,12 +20,30 @@ NULL
 #' @param arrondi_valeurs Si on souhaite arrondir les valeurs, par exemple au milliers. Le principe est celui de round, dans R : round(115,4554, 1) => 115,5 / round(115,45554, -2) => 100
 #' @param taille_valeurs taille des valeurs affichées, en pourcentage de la hauteur de la carte. Par défaut, 2 (pour 2%)
 #' @param afficher_legende affiche, ou non, la légende à côté de la carte
+#' @param formatter_valeurs Fonction de formattage des valeurs du tooltip.
 #' @param save_png TRUE ou FALSE, selon qu'on souhaite ou non sauver un png avec l'image
 #'
 #' @return une carte format leaflet
 #' @export
 #'
-creer_carte_indiv <- function(donnees, region = "FRANCEMETRO", palette, titre_legende = "Legende", afficher_valeurs = FALSE, couleur_valeurs = "black", arrondi_valeurs = NA, taille_valeurs = 2, afficher_legende=FALSE, save_png = FALSE) {
+creer_carte_indiv <- function(donnees,
+                              region = "FRANCEMETRO",
+                              palette,
+                              titre_legende = "Legende",
+                              afficher_valeurs = FALSE,
+                              couleur_valeurs = "black",
+                              arrondi_valeurs = NA,
+                              taille_valeurs = 2,
+                              afficher_legende = TRUE,
+                              formatter_valeurs = NULL,
+                              save_png = FALSE) {
+
+  if (is.null(formatter_valeurs)) {
+    formatter_valeurs <- function(x) {
+      format(x, scientific = FALSE, big.mark = " ", dec = ",", trim = TRUE)
+    }
+  }
+
   # Fonction qui créée une carte pour une région donnée, avec une palette déjà prédéfinie
   data <- carte_restreindre_base(donnees,region)
 
@@ -48,7 +66,7 @@ creer_carte_indiv <- function(donnees, region = "FRANCEMETRO", palette, titre_le
               ifelse(
                 is.na(VALEUR),
                 "Non renseign\u00e9",
-                format(VALEUR, big.mark = " ", decimal.mark = ",", scientific = FALSE)
+                formatter_valeurs(VALEUR)
               ),
               "</b>"
             ),
@@ -85,7 +103,7 @@ creer_carte_indiv <- function(donnees, region = "FRANCEMETRO", palette, titre_le
               ifelse(
                 is.na(VALEUR),
                 "Non renseign\u00e9",
-                format(VALEUR, big.mark = " ", decimal.mark = ",", scientific = FALSE)
+                formatter_valeurs(VALEUR)
               ),
               "</b>"
             ),
@@ -125,7 +143,7 @@ creer_carte_indiv <- function(donnees, region = "FRANCEMETRO", palette, titre_le
           label = ~label_values,
           labelOptions = labelOptions(
             style = list("font-size"=paste0(taille_valeurs, "vw"), color = couleur_valeurs),
-            noHide = T, direction = "center", textOnly = TRUE, offset=c(0,0)
+            noHide = TRUE, direction = "center", textOnly = TRUE, offset=c(0,0)
           )
         )
     }

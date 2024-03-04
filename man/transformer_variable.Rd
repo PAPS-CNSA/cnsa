@@ -7,7 +7,8 @@
 transformer_variable(
   variable_entree,
   type_souhaite = "CAT_AUTO",
-  classes_souhaitees = 5
+  classes_souhaitees = 5,
+  formatter_valeurs = NULL
 )
 }
 \arguments{
@@ -16,6 +17,8 @@ transformer_variable(
 \item{type_souhaite}{type de sortie souhaité de la variable. Par défaut "CAT_AUTO", c'est à dire variable catégorielle avec des seuils calculés automatiquement}
 
 \item{classes_souhaitees}{Nombre de classes souhaitées (si on est dans de l'auto) ou vecteur de classes (si on est dans du manuel)}
+
+\item{formatter_valeurs}{Fonction pour formatter les libellés}
 }
 \value{
 une variable modifiée pour devenir catégorielle (a priori)
