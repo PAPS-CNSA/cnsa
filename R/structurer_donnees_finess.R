@@ -22,7 +22,7 @@ structurer_donnees_finess <- function(base) {
 
   #Charger la table de correspondance categorie
   #Attention la catégorie 362 - ESLD est une catégorie sanitaire nb de places = NA
-  fichier_a_charger <- paste("corresp_categorie_complete.csv", sep ='')
+  fichier_a_charger <- paste0(repertoire_finess,"corresp_categorie_complete.csv", sep ='')
   corresp_categorie <- read_delim(fichier_a_charger, delim = ";")
   
   # Merger la table categorie avec la base chargee finess
@@ -30,8 +30,8 @@ structurer_donnees_finess <- function(base) {
     left_join(corresp_categorie, by = c("categetab" = "categorie"))
   
   base_ref <- base %>%
-    select("cog", "region", "departement", "code_domaine",	"libelle_domaine",	"type_esms", "nofinesset", "categetab",
-           "libelle_categorie_court", "libelle_categorie_regroup",	"financeur", "statutjuridique", "statut", "mft", "dateouvert") %>%
+    select("cog", "region", "departement", "code_domaine", "libelle_domaine", "type_esms", "nofinesset", "categetab",
+           "libelle_categorie_court", "libelle_categorie_regroup", "financeur", "statutjuridique", "statut", "mft", "dateouvert") %>%
     group_by(nofinesset) %>%
     filter(row_number()==1) %>%
     rename(statut_jur_agrege = statut) %>%
