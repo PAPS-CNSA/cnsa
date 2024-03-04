@@ -22,9 +22,9 @@ structurer_donnees_finess <- function(base) {
 
   #Charger la table de correspondance categorie
   #Attention la catégorie 362 - ESLD est une catégorie sanitaire nb de places = NA
-  fichier_a_charger <- "corresp_categorie_complete.csv"
+  fichier_a_charger <- paste0(repertoire_finess,"corresp_categorie_complete.csv")
   corresp_categorie <- read_delim(fichier_a_charger, delim = ";")
-  
+
   # Merger la table categorie avec la base chargee finess
   base <- base %>% 
     left_join(corresp_categorie, by = c("categetab" = "categorie"))
