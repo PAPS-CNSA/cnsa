@@ -1,6 +1,7 @@
 #' @importFrom dplyr select group_by filter rename ungroup summarize group_by left_join mutate row_number
 #' @importFrom tidyr pivot_wider
 #' @importFrom lubridate year
+#' @importFrom readr read_delim
 NULL
 
 #' Structurer les donnees de Finess
@@ -14,7 +15,7 @@ NULL
 #' @export
 
 
-structurer_donnees_finess <- function(base) {
+structurer_donnees_finess <- function(base, repertoire_finess) {
   #Changer certains codes geo cog dans FINESS puor harmoniser avec table insee et recupérer STATUT
   base[(base$departement=='75'),]$cog <- '75056'
   base[(base$cog %in% c('69025','69381','69382','69383','69384','69385','69386','69387','69387','69388','69389')),]$cog <- '69123'
@@ -26,9 +27,9 @@ structurer_donnees_finess <- function(base) {
   corresp_categorie <- read_delim(fichier_a_charger, delim = ";")
 
   # Merger la table categorie avec la base chargee finess
-  base <- base %>% 
+  base <- base %>%
     left_join(corresp_categorie, by = c("categetab" = "categorie"))
-  
+
   base_ref <- base %>%
     select("cog", "region", "departement", "code_domaine", "libelle_domaine", "type_esms", "nofinesset", "categetab",
            "libelle_categorie_court", "libelle_categorie_regroup", "financeur", "statutjuridique", "statut", "mft", "dateouvert") %>%
@@ -40,7 +41,7 @@ structurer_donnees_finess <- function(base) {
 
   # sommmer les capinstot par type d'hébergement pour le champ PA
   base_pa <- base %>%
-    filter(code_domaine == 3, indsupinst == "N") 
+    filter(code_domaine == 3, indsupinst == "N")
 
   base_calc_pa_heb <- base_pa %>%
     group_by(nofinesset, hebergement) %>%
@@ -85,7 +86,7 @@ structurer_donnees_finess <- function(base) {
 
   output <-data.frame(output)
 
-  print("--- --- Création de la variable statut_juridique_fin")
+  print("--- --- Creation de la variable statut_juridique_fin")
   output <- output %>%
     mutate(
       statut_jur_fin = case_when(

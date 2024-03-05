@@ -23,7 +23,7 @@ creer_reference_finess <- function(origine = "GEOD") {
   for (annee in annees_finess) {
     print(annee)
     finess <- base_finess_reduite[[as.numeric(annee)]]
-    tempo <- structurer_donnees_finess(finess)
+    tempo <- structurer_donnees_finess(finess, repertoire_finess)
     tempo$categetab <- as.character(tempo$categetab)
     tempo <- tempo %>% rename(FINESS = nofinesset)
     resultat[[annee]] <- tempo
