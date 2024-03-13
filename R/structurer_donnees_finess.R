@@ -56,7 +56,8 @@ structurer_donnees_finess <- function(base, repertoire_finess) {
 
   base_calc_pa_tot <- base_pa %>%
     group_by(nofinesset) %>%
-    summarize(capinsTOT = sum(capinstot), .groups = "drop")
+    summarize(capinsTOT = sum(capinstot, na.rm = TRUE), .groups = "drop")
+  
 
   # Joindre les deux bases de données
   base_calc_pa <- left_join(base_calc_pa_heb, base_calc_pa_tot, by = "nofinesset")
@@ -67,7 +68,7 @@ structurer_donnees_finess <- function(base, repertoire_finess) {
 
   base_calc_ph <- base_ph %>%
     group_by(nofinesset) %>%
-    summarize(capinsTOT = sum(capinstot), .groups = "drop")
+    summarize(capinsTOT = sum(capinstot, na.rm = TRUE), .groups = "drop")
 
   # Joindre les deux bases de données
   base_calc <- bind_rows(base_calc_pa, base_calc_ph)
