@@ -32,13 +32,13 @@ format_liste_v_vers_tablo <- function(liste_v) {
 
   # Ensuite, on fusionne tous les tableaux. On le fait avec une boucle - peut être pas optimal - dans le but de pouvoir afficher une barre de progrès
 
-  grand_tableau <- list_tableaux_long[[1]]
+  grand_tableau <- liste_tableaux[[1]]
   var_identifiante <- names(grand_tableau)[1]
-  progress_bar <- txtProgressBar(min = 0, max = length(list_tableaux_long), style = 3)
+  progress_bar <- txtProgressBar(min = 0, max = length(liste_tableaux), style = 3)
 
   # Fusionner les tableaux avec une barre de progression
-  for (i in 2:length(list_tableaux_long)) {
-    grand_tableau <- full_join(grand_tableau, list_tableaux_long[[i]], by = c(var_identifiante, "ANNEE"))
+  for (i in 2:length(liste_tableaux)) {
+    grand_tableau <- full_join(grand_tableau, liste_tableaux[[i]], by = c(var_identifiante, "ANNEE"))
     setTxtProgressBar(progress_bar, i)
 
   }

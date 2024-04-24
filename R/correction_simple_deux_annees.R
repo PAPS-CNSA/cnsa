@@ -24,21 +24,22 @@ correction_simple_deux_annees <- function(tablo, ordre = TRUE) {
   noms_de_colonnes <- colnames(tablo)
   nom1 <- noms_de_colonnes[1]
   nom2 <- noms_de_colonnes[2]
-  cylindre = !is.na(tablo[, nom1]) & !is.na(tablo[, nom2])
+  cylindre = !is.na(tablo[, nom1]) & !is.nan(tablo[[nom1]]) &!is.infinite(tablo[[nom1]]) & !is.na(tablo[[nom2]]) & !is.nan(tablo[[nom2]]) & !is.infinite(tablo[[nom2]])
 
   # On isole deux cas de figure : on fait dans l'ordre, ou dans le désordre
 
   if (ordre == TRUE) {
     # Dans l'ordre, cela fait dire qu'on redresse la deuxième colonne à partir de la première
-    a_redresser = !is.na(tablo[, nom1]) & is.na(tablo[, nom2])
+    a_redresser = !is.na(tablo[, nom1]) & ( is.na(tablo[, nom2]) | is.nan(tablo[[nom2]]) | is.infinite(tablo[[nom2]]))
     taux_croissance <- sum(tablo[cylindre, nom2])/sum(tablo[cylindre, nom1]) - 1
-    if (!is.nan(taux_croissance)) tablo[a_redresser, nom2] <- tablo[a_redresser, nom1] * (1 + taux_croissance)
+    if (!is.nan(taux_croissance) & !is.na(taux_croissance)) tablo[a_redresser, nom2] <- tablo[a_redresser, nom1] * (1 + taux_croissance)
     return(tablo[, nom2])
   } else {
     # Dans le désordre, c'est l'inverse : première colonne à partir de la deuxième
-    a_redresser = !is.na(tablo[, nom2]) & is.na(tablo[, nom1])
+    a_redresser = !is.na(tablo[, nom2]) & ( is.na(tablo[, nom1]) | is.nan(tablo[[nom1]]) | is.infinite(tablo[[nom1]]))
+
     taux_croissance <- sum(tablo[cylindre, nom1])/sum(tablo[cylindre, nom2]) - 1
-    if (!is.nan(taux_croissance)) tablo[a_redresser, nom1] <- tablo[a_redresser, nom2] * (1 + taux_croissance)
+    if (!is.nan(taux_croissance) & !is.na(taux_croissance)) tablo[a_redresser, nom1] <- tablo[a_redresser, nom2] * (1 + taux_croissance)
     return(tablo[, nom1])
   }
 }
