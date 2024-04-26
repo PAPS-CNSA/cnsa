@@ -36,7 +36,43 @@ creer_reference_finess <- function(origine = "GEOD") {
       )
     }
   }
+
+  # On va, en prévision d'une imputation, prévoir une base full avec les places 2019 (ou d'autres années si pas dispo)
+  # L'objectif est d'avoir, dans tous les cas, un nombre de places en 2019
+
+  base_spe <- base_full[,c("FINESS", "categetab")]
+  base_spe <- base_spe %>% left_join(resultat[["2019"]] %>% select(c("FINESS", "capinsTOT", "PA_LARGE", "PA_RESTREINT", "PH")), by = "FINESS")
+  base_spe$a_faire <- rowSums(base_spe[, c("PA_LARGE", "PA_RESTREINT", "PH")], na.rm = T)
+
+  base_spe <- base_spe[base_spe$a_faire >= 1,]
+  sum(is.na(base_spe$capinsTOT))
+  for (year in c("2020", "2018", "2021", "2017", "2022")) {
+    print(year)
+    finess_a_completer <- base_spe[(is.na(base_spe$capinsTOT) | (base_spe$capinsTOT==0) ) & !(base_spe$categetab %in% c("189", "190", "460")) , ]$FINESS
+    tempo <- resultat[[year]] %>% filter(FINESS %in% finess_a_completer) %>% select(FINESS, capinsTOT) %>% rename(capinsTOT_temp = capinsTOT)
+    base_spe <- base_spe %>% left_join(tempo, by = "FINESS")
+    base_spe[base_spe$FINESS %in% finess_a_completer,]$capinsTOT <-base_spe[base_spe$FINESS %in% finess_a_completer,]$capinsTOT_temp
+    base_spe <- base_spe %>% select(-capinsTOT_temp)
+  }
+  base_spe[is.na(base_spe$capinsTOT) & base_spe$categetab=="460",]$capinsTOT <- 0 # Les SAAD n'ont pas de places
+
+  base_spe[base_spe$PA_RESTREINT == 0 | (base_spe$PA_RESTREINT==1 & (!is.na(base_spe$capinsTOT) | (base_spe$capinsTOT>0))),]
+
+  # On filtre les finess qui n'ont jamais eu de places côté PA_RESTREINT
+
+  a_filtrer <- base_spe[(base_spe$PA_RESTREINT==1 & (is.na(base_spe$capinsTOT) | (base_spe$capinsTOT==0))),]$FINESS
+
+  base_spe <- base_spe %>% filter(!(FINESS %in% a_filtrer))
+
+  for (annee in annees_finess) {
+    resultat[[year]] <- resultat[[year]] %>% filter(!(FINESS %in% a_filtrer))
+  }
+
+  base_full <- base_full %>% filter(!(FINESS %in% a_filtrer))
+
   resultat[["SYNTHESE"]] <- base_full
+  resultat[["SPE_2019"]] <- base_spe
+
   return(resultat)
 }
 
