@@ -39,9 +39,6 @@ if(any(!is.character(donnees$code_insee) | sapply(donnees$code_insee, nchar) != 
     mutate(code_insee = str_pad(code_insee, width = 3, side = "left", pad = "0"))
 }
 
-chemin_geometries <- system.file("data", "france_shapefile_une_carte.RData", package = "cnsa")
-load(chemin_geometries)
-
   donnees_sf_fusionnees <- left_join(france_shapefile_une_carte, donnees, by = "code_insee") %>% st_as_sf()
 
   if(niveau_geo == "Metropole"){
