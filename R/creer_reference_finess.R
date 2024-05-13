@@ -22,10 +22,31 @@ creer_reference_finess <- function(origine = "GEOD") {
   resultat <- list()
   for (annee in annees_finess) {
     print(annee)
+
+    # On évalue pour chaque FINESS la présence de l'internat
+    tableau_internat <- base_finess_reduite[[as.numeric(annee)]] %>%
+      group_by(nofinesset) %>%
+      mutate(internat = if_else(any(ta == '11'), "OUI", "NON")) %>%
+      distinct(nofinesset, .keep_all = TRUE) %>%
+      select(nofinesset, internat)
+
+    # On évalue pour chaque FINESS la présence d'une déficience principale
+    tableau_deficience <- selection_finess_dominant(base_finess_reduite[[as.numeric(annee)]], "client", 0.8) %>%
+      mutate(RMP = ifelse(client == 121, 1, 0),
+             DGP = ifelse(client == 204, 1, 0),
+             POLY = ifelse(client == 500, 1, 0),
+             TSA = ifelse(client == 437, 1, 0)) %>%
+      select(-capacite,-client)
+
     finess <- base_finess_reduite[[as.numeric(annee)]]
     tempo <- structurer_donnees_finess(finess, repertoire_finess)
     tempo$categetab <- as.character(tempo$categetab)
     tempo <- tempo %>% rename(FINESS = nofinesset)
+
+    tempo <- tempo %>%
+      left_join(tableau_internat, by = c("FINESS" = "nofinesset")) %>%
+      left_join(tableau_deficience, by = c("FINESS" = "nofinesset"))
+
     resultat[[annee]] <- tempo
     if (annee == annees_finess[1]) { # On créee une base complète avec la dernière version de chaque Finess
       base_full = tempo
@@ -41,7 +62,7 @@ creer_reference_finess <- function(origine = "GEOD") {
   # L'objectif est d'avoir, dans tous les cas, un nombre de places en 2019
 
   base_spe <- base_full[,c("FINESS", "categetab")]
-  base_spe <- base_spe %>% left_join(resultat[["2019"]] %>% select(c("FINESS", "capinsTOT", "PA_LARGE", "PA_RESTREINT", "PH")), by = "FINESS")
+  base_spe <- base_spe %>% left_join(resultat[["2019"]] %>% select(c("FINESS", "capinsTOT", "PA_LARGE", "PA_RESTREINT", "PH", "RMP", "DGP", "POLY", "TSA", "internat")), by = "FINESS")
   base_spe$a_faire <- rowSums(base_spe[, c("PA_LARGE", "PA_RESTREINT", "PH")], na.rm = T)
 
   base_spe <- base_spe[base_spe$a_faire >= 1,]
