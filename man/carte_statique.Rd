@@ -12,14 +12,13 @@ carte_statique(
   discretisation = "quantile",
   nbre_classes = 5,
   titre_legende = "",
-  titre_carte = "",
-  source = "",
-  auteur = "",
-  medaillon = TRUE
+  couleurs = "RdYlBu",
+  medaillon = TRUE,
+  medaillon_emprise = "IDF"
 )
 }
 \arguments{
-\item{donnees}{La base de données qui contient les valeurs à afficher sur la carte. la colonne qui renseigne le département doit impérativement s'appeler 'code_insee'. Cette colonne doit être au format caractère et en avoir trois. Il ne doit pas y avoir de géométries !!}
+\item{donnees}{La base de données qui contient les valeurs à afficher sur la carte. la colonne qui renseigne le département doit impérativement s'appeler 'code_insee'. Il ne doit pas y avoir de géométries !!}
 
 \item{var}{Variable qui doit être affichée sur la carte.}
 
@@ -27,19 +26,17 @@ carte_statique(
 
 \item{choro}{Si TRUE (défaut) la carte sera de type choroplète, sinon elle sera en proportions.}
 
-\item{discretisation}{Choix de la méthode de discrétisation (le détail des méthodes disponibles est accessible dans le dictionnaire de la fonction mf_get_breaks()). Utilisé uniquement avec les cartes choroplètes.}
+\item{discretisation}{Choix de la méthode de discrétisation (le détail des méthodes disponibles est accessible dans le dictionnaire de mapsf::mf_get_breaks()). Utilisé uniquement avec les cartes choroplètes.}
 
 \item{nbre_classes}{Nombre de classes dans laquelle est décomposée une variable. Utilisé uniquement avec les cartes choroplètes.}
 
 \item{titre_legende}{Titre de la légende.}
 
-\item{titre_carte}{Titre de la carte.}
-
-\item{source}{Source des données.}
-
-\item{auteur}{Auteur de la carte.}
+\item{couleurs}{Palette de couleurs à utiliser pour les cartes. Les palettes disponibles sont celles du package RColorBrewer. La palette par défaut est "RdYlBu" (adaptée aux daltoniens).}
 
 \item{medaillon}{Si TRUE (défaut) une carte médaillon affiche l'Île-De-France.}
+
+\item{medaillon_emprise}{Emprise du médaillon.Par défaut, il s'agit de l'ïle-de-France. Pour avoir une autre empprise, il faut donner une combinaison de valeurs au format trois caractères. Par exemple, pour l'ïle-de-France la combinaison de valeurs est c("075", "077", "078", "091", "092", "093", "094", "095").}
 }
 \description{
 Fonction principale pour faire une carte statique à l'échelle départementale.
