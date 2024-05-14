@@ -11,6 +11,7 @@ carte_statique(
   choro = TRUE,
   discretisation = "quantile",
   nbre_classes = 5,
+  departements_uniquement = TRUE,
   titre_legende = "",
   couleurs = "RdYlBu",
   medaillon = TRUE,
@@ -29,6 +30,8 @@ carte_statique(
 \item{discretisation}{Choix de la méthode de discrétisation (le détail des méthodes disponibles est accessible dans le dictionnaire de mapsf::mf_get_breaks()). Utilisé uniquement avec les cartes choroplètes.}
 
 \item{nbre_classes}{Nombre de classes dans laquelle est décomposée une variable. Utilisé uniquement avec les cartes choroplètes.}
+
+\item{departements_uniquement}{Si TRUE alors les contours géographiques sont ceux des départements seulement. Si FALSe, les contours géographiques sont les départements, les collectivités (CEA et Corse) et la métropole de Lyon.}
 
 \item{titre_legende}{Titre de la légende.}
 

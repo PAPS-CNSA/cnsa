@@ -16,6 +16,7 @@ NULL
 #' @param choro Si TRUE (défaut) la carte sera de type choroplète, sinon elle sera en proportions.
 #' @param discretisation Choix de la méthode de discrétisation (le détail des méthodes disponibles est accessible dans le dictionnaire de mapsf::mf_get_breaks()). Utilisé uniquement avec les cartes choroplètes.
 #' @param nbre_classes Nombre de classes dans laquelle est décomposée une variable. Utilisé uniquement avec les cartes choroplètes.
+#' @param departements_uniquement Si TRUE alors les contours géographiques sont ceux des départements seulement. Si FALSe, les contours géographiques sont les départements, les collectivités (CEA et Corse) et la métropole de Lyon.
 #' @param titre_legende Titre de la légende.
 #' @param couleurs Palette de couleurs à utiliser pour les cartes. Les palettes disponibles sont celles du package RColorBrewer. La palette par défaut est "RdYlBu" (adaptée aux daltoniens).
 #' @param medaillon Si TRUE (défaut) une carte médaillon affiche l'Île-De-France.
@@ -29,6 +30,7 @@ carte_statique <- function(donnees,
                            choro = TRUE,
                            discretisation = "quantile",
                            nbre_classes = 5,
+                           departements_uniquement = TRUE,
                            titre_legende = "",
                            couleurs = "RdYlBu", # Couleurs adaptées aux daltoniens.
                            medaillon = TRUE,
@@ -38,8 +40,11 @@ if(any(!is.character(donnees$code_insee) | sapply(donnees$code_insee, nchar) != 
   donnees <- donnees %>% mutate(code_insee = as.character(code_insee)) %>%
     mutate(code_insee = str_pad(code_insee, width = 3, side = "left", pad = "0"))
 }
-
+  if(isTRUE(departements_uniquement)){
   donnees_sf_fusionnees <- left_join(france_shapefile_une_carte, donnees, by = "code_insee") %>% st_as_sf()
+  } else{
+    donnees_sf_fusionnees <- left_join(france_shapefile_Dept_collectivite, donnees, by = "code_insee") %>% st_as_sf()
+  }
 
   if(niveau_geo == "Metropole"){
     donnees_sf <- donnees_sf_fusionnees %>% filter(!(code_insee %in% c("971", "972", "973", "974", "976")))
