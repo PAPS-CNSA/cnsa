@@ -57,7 +57,7 @@ structurer_donnees_finess <- function(base, repertoire_finess) {
   base_calc_pa_tot <- base_pa %>%
     group_by(nofinesset) %>%
     summarize(capinsTOT = sum(capinstot, na.rm = TRUE), .groups = "drop")
-  
+
 
   # Joindre les deux bases de données
   base_calc_pa <- left_join(base_calc_pa_heb, base_calc_pa_tot, by = "nofinesset")
@@ -101,6 +101,7 @@ structurer_donnees_finess <- function(base, repertoire_finess) {
   # Création de la variable ASH FINESS en utilisant la condition ifelse
   print("--- --- Creation de la variable ASH FINESS")
   output$finess_ash <- ifelse(output$mft %in% c("08", "09", "21", "40", "41", "44", "45", "48", "50", "52", "56"), "OUI", "NON")
+
 
 
   return(output)
