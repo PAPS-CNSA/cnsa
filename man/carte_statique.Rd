@@ -15,7 +15,8 @@ carte_statique(
   titre_legende = "",
   couleurs = "RdYlBu",
   medaillon = TRUE,
-  medaillon_emprise = "IDF"
+  medaillon_emprise = "IDF",
+  leg_no_data = "Absence de donnée"
 )
 }
 \arguments{
@@ -40,6 +41,8 @@ carte_statique(
 \item{medaillon}{Si TRUE (défaut) une carte médaillon affiche l'Île-De-France.}
 
 \item{medaillon_emprise}{Emprise du médaillon.Par défaut, il s'agit de l'ïle-de-France. Pour avoir une autre empprise, il faut donner une combinaison de valeurs au format trois caractères. Par exemple, pour l'ïle-de-France la combinaison de valeurs est c("075", "077", "078", "091", "092", "093", "094", "095").}
+
+\item{leg_no_data}{Commentaire dans la légende pour les observations sans donnée. Par défaut, il affiche 'Absence de donnée".}
 }
 \description{
 Fonction principale pour faire une carte statique à l'échelle départementale.

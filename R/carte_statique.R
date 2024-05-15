@@ -21,7 +21,7 @@ NULL
 #' @param couleurs Palette de couleurs à utiliser pour les cartes. Les palettes disponibles sont celles du package RColorBrewer. La palette par défaut est "RdYlBu" (adaptée aux daltoniens).
 #' @param medaillon Si TRUE (défaut) une carte médaillon affiche l'Île-De-France.
 #' @param medaillon_emprise Emprise du médaillon.Par défaut, il s'agit de l'ïle-de-France. Pour avoir une autre empprise, il faut donner une combinaison de valeurs au format trois caractères. Par exemple, pour l'ïle-de-France la combinaison de valeurs est c("075", "077", "078", "091", "092", "093", "094", "095").
-
+#' @param leg_no_data Commentaire dans la légende pour les observations sans donnée. Par défaut, il affiche 'Absence de donnée".
 #' @export
 
 carte_statique <- function(donnees,
@@ -34,7 +34,8 @@ carte_statique <- function(donnees,
                            titre_legende = "",
                            couleurs = "RdYlBu", # Couleurs adaptées aux daltoniens.
                            medaillon = TRUE,
-                           medaillon_emprise = "IDF"){
+                           medaillon_emprise = "IDF",
+                           leg_no_data = "Absence de donnée"){
 
 if(any(!is.character(donnees$code_insee) | sapply(donnees$code_insee, nchar) != 3)){
   donnees <- donnees %>% mutate(code_insee = as.character(code_insee)) %>%
@@ -72,7 +73,7 @@ if(isTRUE(choro)){
          breaks = discretisation, nbreaks = nbre_classes,
          leg_pos = "bottomleft",
          leg_title = titre_legende,
-         leg_no_data = "Absence de donnée")
+         leg_no_data = leg_no_data)
 
   if(isTRUE(medaillon)){
     mf_inset_on(x = IDF, pos = "topright")
@@ -84,7 +85,8 @@ if(isTRUE(choro)){
 
   mf_map(x = donnees_sf, var, type = "prop", col = "azure",
          leg_pos = "bottomleft",
-         leg_title = titre_legende)
+         leg_title = titre_legende,
+         leg_no_data = leg_no_data)
 
   if(isTRUE(medaillon)){
     mf_inset_on(x = IDF, pos = "topright")
