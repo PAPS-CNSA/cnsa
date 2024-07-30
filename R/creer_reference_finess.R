@@ -1,3 +1,6 @@
+#' @importFrom dplyr if_else group_by mutate distinct select left_join bind_rows
+NULL
+
 #' Créer référence finess
 #'
 #' Crée une base de référence finess, utilisable pour du redressement, ou pour toute autre chose
@@ -78,6 +81,8 @@ creer_reference_finess <- function(origine = "GEOD") {
   base_spe[is.na(base_spe$capinsTOT) & base_spe$categetab=="460",]$capinsTOT <- 0 # Les SAAD n'ont pas de places
 
   base_spe[base_spe$PA_RESTREINT == 0 | (base_spe$PA_RESTREINT==1 & (!is.na(base_spe$capinsTOT) | (base_spe$capinsTOT>0))),]
+
+
 
   # On filtre les finess qui n'ont jamais eu de places côté PA_RESTREINT
 
