@@ -82,6 +82,8 @@ creer_reference_finess <- function(origine = "GEOD") {
 
   base_spe[base_spe$PA_RESTREINT == 0 | (base_spe$PA_RESTREINT==1 & (!is.na(base_spe$capinsTOT) | (base_spe$capinsTOT>0))),]
 
+
+
   # On filtre les finess qui n'ont jamais eu de places côté PA_RESTREINT
 
   a_filtrer <- base_spe[(base_spe$PA_RESTREINT==1 & (is.na(base_spe$capinsTOT) | (base_spe$capinsTOT==0))),]$FINESS
