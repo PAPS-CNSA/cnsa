@@ -1,3 +1,6 @@
+#' @importFrom dplyr group_by mutate distinct select left_join bind_rows if_else
+NULL
+
 #' Créer référence finess
 #'
 #' Crée une base de référence finess, utilisable pour du redressement, ou pour toute autre chose
