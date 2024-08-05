@@ -12,11 +12,11 @@ NULL
 #'
 #' @param donnees La base de données qui contient les valeurs à afficher sur la carte. la colonne qui renseigne le département doit impérativement s'appeler 'code_insee'. Il ne doit pas y avoir de géométries !!
 #' @param var Variable qui doit être affichée sur la carte.
-#' @param niveau_geo Il y en a trois : 'France_entiere' (France métropolitaine et départements d'Outre-mer), 'Metropole' (France métropolitaine uniquement) et 'Outre-mer' (Départements d'Outre-mer uniquement).
+#' @param france_outre_mer Il y a trois possibilités : 'France_entiere' (France métropolitaine et départements d'Outre-mer), 'Metropole' (France métropolitaine uniquement) et 'Outre-mer' (Départements d'Outre-mer uniquement).
 #' @param choro Si TRUE (défaut) la carte sera de type choroplète, sinon elle sera en proportions.
 #' @param discretisation Choix de la méthode de discrétisation (le détail des méthodes disponibles est accessible dans le dictionnaire de mapsf::mf_get_breaks()). Utilisé uniquement avec les cartes choroplètes.
 #' @param nbre_classes Nombre de classes dans laquelle est décomposée une variable. Utilisé uniquement avec les cartes choroplètes.
-#' @param departements_uniquement Si TRUE alors les contours géographiques sont ceux des départements seulement. Si FALSe, les contours géographiques sont les départements, les collectivités (CEA et Corse) et la métropole de Lyon.
+#' @param nivea_geo Détermine les contours géographiques. Il y en a trois : 'departements'  (départements seulement), 'collectivites et départements'  (les départements, les collectivités -CEA et Corse- et la métropole de Lyon), 'regions' (les régions).
 #' @param titre_legende Titre de la légende.
 #' @param couleurs Palette de couleurs à utiliser pour les cartes. Les palettes disponibles sont celles du package RColorBrewer. La palette par défaut est "RdYlBu" (adaptée aux daltoniens).
 #' @param medaillon Si TRUE (défaut) une carte médaillon affiche l'Île-De-France.
@@ -26,11 +26,11 @@ NULL
 
 carte_statique <- function(donnees,
                            var,
-                           niveau_geo = "France_entiere",
+                           france_outre_mer = "France_entiere",
                            choro = TRUE,
                            discretisation = "quantile",
                            nbre_classes = 5,
-                           departements_uniquement = TRUE,
+                           nivea_geo = "departements",
                            titre_legende = "",
                            couleurs = "RdYlBu", # Couleurs adaptées aux daltoniens.
                            medaillon = TRUE,
@@ -41,17 +41,19 @@ if(any(!is.character(donnees$code_insee) | sapply(donnees$code_insee, nchar) != 
   donnees <- donnees %>% mutate(code_insee = as.character(code_insee)) %>%
     mutate(code_insee = str_pad(code_insee, width = 3, side = "left", pad = "0"))
 }
-  if(isTRUE(departements_uniquement)){
+  if(nivea_geo == "departements"){
   donnees_sf_fusionnees <- left_join(france_shapefile_une_carte, donnees, by = "code_insee") %>% st_as_sf()
-  } else{
+  } else if(nivea_geo == "collectivites et departements"){
     donnees_sf_fusionnees <- left_join(france_shapefile_Dept_collectivite, donnees, by = "code_insee") %>% st_as_sf()
+  } else if(nivea_geo == "regions"){
+    donnees_sf_fusionnees <- left_join(france_shapefile_Regions, donnees, by = "code_insee") %>% st_as_sf()
   }
 
-  if(niveau_geo == "Metropole"){
+  if(france_outre_mer == "Metropole"){
     donnees_sf <- donnees_sf_fusionnees %>% filter(!(code_insee %in% c("971", "972", "973", "974", "976")))
-  } else if(niveau_geo == "Outre-mer"){
+  } else if(france_outre_mer == "Outre-mer"){
     donnees_sf <- donnees_sf_fusionnees %>% filter(code_insee %in% c("971", "972", "973", "974", "976"))
-  } else if(niveau_geo == "France_entiere"){
+  } else if(france_outre_mer == "France_entiere"){
     donnees_sf <- donnees_sf_fusionnees
 }
 
@@ -75,7 +77,7 @@ if(isTRUE(choro)){
          leg_title = titre_legende,
          leg_no_data = leg_no_data)
 
-  if(isTRUE(medaillon)){
+  if(isTRUE(medaillon) && nivea_geo != "regions"){
     mf_inset_on(x = IDF, pos = "topright")
     mf_map(x = IDF, var, type = "choro", breaks = discretisation, nbreaks = nbre_classes, leg_pos = NA)
     mf_inset_off()
@@ -88,7 +90,7 @@ if(isTRUE(choro)){
          leg_title = titre_legende,
          leg_no_data = leg_no_data)
 
-  if(isTRUE(medaillon)){
+  if(isTRUE(medaillon) && nivea_geo != "regions"){
     mf_inset_on(x = IDF, pos = "topright")
     mf_map(x = IDF, var, type = "prop")
     mf_inset_off()

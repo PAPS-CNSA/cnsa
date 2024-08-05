@@ -7,11 +7,11 @@
 carte_statique(
   donnees,
   var,
-  niveau_geo = "France_entiere",
+  france_outre_mer = "France_entiere",
   choro = TRUE,
   discretisation = "quantile",
   nbre_classes = 5,
-  departements_uniquement = TRUE,
+  nivea_geo = "departements",
   titre_legende = "",
   couleurs = "RdYlBu",
   medaillon = TRUE,
@@ -24,7 +24,7 @@ carte_statique(
 
 \item{var}{Variable qui doit être affichée sur la carte.}
 
-\item{niveau_geo}{Il y en a trois : 'France_entiere' (France métropolitaine et départements d'Outre-mer), 'Metropole' (France métropolitaine uniquement) et 'Outre-mer' (Départements d'Outre-mer uniquement).}
+\item{france_outre_mer}{Il y a trois possibilités : 'France_entiere' (France métropolitaine et départements d'Outre-mer), 'Metropole' (France métropolitaine uniquement) et 'Outre-mer' (Départements d'Outre-mer uniquement).}
 
 \item{choro}{Si TRUE (défaut) la carte sera de type choroplète, sinon elle sera en proportions.}
 
@@ -32,7 +32,7 @@ carte_statique(
 
 \item{nbre_classes}{Nombre de classes dans laquelle est décomposée une variable. Utilisé uniquement avec les cartes choroplètes.}
 
-\item{departements_uniquement}{Si TRUE alors les contours géographiques sont ceux des départements seulement. Si FALSe, les contours géographiques sont les départements, les collectivités (CEA et Corse) et la métropole de Lyon.}
+\item{nivea_geo}{Détermine les contours géographiques. Il y en a trois : 'departements'  (départements seulement), 'collectivites et départements'  (les départements, les collectivités -CEA et Corse- et la métropole de Lyon), 'regions' (les régions).}
 
 \item{titre_legende}{Titre de la légende.}
 
