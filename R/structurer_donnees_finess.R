@@ -32,7 +32,9 @@ structurer_donnees_finess <- function(base, repertoire_finess) {
 
   base_ref <- base %>%
     select("cog", "region", "departement", "code_domaine", "libelle_domaine", "type_esms", "nofinesset", "categetab",
-           "libelle_categorie_court", "libelle_categorie_regroup", "financeur", "statutjuridique", "statut", "mft", "dateouvert", "PA_RESTREINT","PA_LARGE","PH") %>%
+           "libelle_categorie_court", "libelle_categorie_regroup", "financeur", "statutjuridique", "statut", "mft", "dateouvert", "PA_RESTREINT","PA_LARGE","PH",
+           "code_regroup_finess", "libelle_categorie_regroup_finess"
+    ) %>%
     group_by(nofinesset) %>%
     filter(row_number()==1) %>%
     rename(statut_jur_agrege = statut) %>%
@@ -80,7 +82,7 @@ structurer_donnees_finess <- function(base, repertoire_finess) {
   # Renommer les colonnes HP et HT en capinsHP et capinsHT respectivement
   output <- base_ref %>% left_join(base_calc, by = "nofinesset") %>%
     select("region", "departement", "cog", "code_domaine", "libelle_domaine",	"type_esms", "nofinesset", "categetab",	"libelle_categorie_court", "libelle_categorie_regroup",	"financeur",
-             "statutjuridique", "statut_jur_agrege", "mft", "dateouvert", "HP", "HT", "AJ", "AN", "AT","F1", "F2", "F1b", "capinsTOT", "PA_RESTREINT","PA_LARGE","PH") %>%
+             "statutjuridique", "statut_jur_agrege", "mft", "dateouvert", "HP", "HT", "AJ", "AN", "AT","F1", "F2", "F1b", "capinsTOT", "PA_RESTREINT","PA_LARGE","PH", "code_regroup_finess", "libelle_categorie_regroup_finess") %>%
     rename(capinsHP = HP, capinsHT = HT, capinsAJ = AJ, capinsAN = AN, capinsAT = AT)
   # %>%
   #   mutate(anneeouvert = year(dateouvert))
