@@ -31,8 +31,9 @@ imputation_creer_diagnostic_detaille <- function(base_stat, base_brute, var_refe
   for (type in c("brut", "stat")) {
     tempo <- tablo[[type]] %>% left_join(base_2019[, c("FINESS", "capinsTOT", "categetab")], by = "FINESS")
 
-    full_variables <- colnames(tempo %>% select(-c("FINESS","capinsTOT", "ANNEE")))
-    full_variables <- full_variables[grepl("ETP", full_variables)]
+    full_variables <- colnames(tempo %>% select(-c("FINESS","capinsTOT", "ANNEE", "categetab")))
+
+
 
     par_categetab <- tempo %>% group_by(categetab, ANNEE) %>% summarize(capacite = sum(capinsTOT),
                                                                         repondants = n(),
@@ -66,6 +67,8 @@ imputation_creer_diagnostic_detaille <- function(base_stat, base_brute, var_refe
   results_na_annee <- list()
   for (annee in unique(resultats[["synth"]]$par_annee$brut_ANNEE)) {
     na_annee <- as.data.frame(matrix(0, nrow = length(full_variables), ncol = 7))
+    full_variables <- full_variables %>% setdiff(c("denom", "numerateur", "resu"))
+
     for (i in seq_along(full_variables)) {
       var <- full_variables[i]
       na_annee[i, 1] <- var
