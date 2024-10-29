@@ -4,10 +4,18 @@
 \alias{format_liste_v_vers_tablo}
 \title{Transforme une liste de variables en un tableau}
 \usage{
-format_liste_v_vers_tablo(liste_v)
+format_liste_v_vers_tablo(
+  liste_v,
+  var_identifiante = "FINESS",
+  var_annee = "ANNEE"
+)
 }
 \arguments{
 \item{liste_v}{une liste de variables}
+
+\item{var_identifiante}{le nom de la variable identifiante. Par défaut, "FINESS"}
+
+\item{var_annee}{le nom de la variable année. Par défaut, "ANNEE"}
 }
 \value{
 un tablo, i.e. une grand tableau avec en première colonne la variable identifiante, en 2e les années (sur plusieurs lignes), puis les autres colonnes sont les variables
