@@ -78,8 +78,12 @@ if(isTRUE(choro)){
          leg_no_data = leg_no_data)
 
   if(isTRUE(medaillon) && nivea_geo != "regions"){
+    # utiliser les mêmes breaks que sur la carte pour être à la même échelle de couleurs
+    breaks = mf_get_breaks(x = donnees %>% select(var) %>% pull(),
+                           breaks = discretisation, nbreaks = nbre_classes)
+
     mf_inset_on(x = IDF, pos = "topright")
-    mf_map(x = IDF, var, type = "choro", breaks = discretisation, nbreaks = nbre_classes, leg_pos = NA)
+    mf_map(x = IDF, var, type = "choro", breaks = breaks, nbreaks = nbre_classes, leg_pos = NA)
     mf_inset_off()
   }
 
