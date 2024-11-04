@@ -1,6 +1,6 @@
 #' @importFrom dplyr left_join filter
 #' @importFrom sf st_as_sf
-#' @importFrom mapsf mf_theme mf_map mf_title mf_credits mf_inset_on mf_inset_off
+#' @importFrom mapsf mf_theme mf_map mf_title mf_credits mf_inset_on mf_inset_off mf_get_breaks
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom stringr str_pad
 NULL
