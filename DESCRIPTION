@@ -1,6 +1,6 @@
 Package: cnsa
 Title: Fonctions utiles pour le pôle PAPS de la CNSA
-Version: 1.1.2
+Version: 1.1.3
 Authors@R: 
     c(
       person(given = "Aurélien", family = "Fortin", email = "aurelien.fortin@cnsa.fr", role = c("aut", "cre")),
