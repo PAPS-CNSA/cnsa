@@ -1,3 +1,6 @@
+v 1.1.3 (2 décembre 2024)
+
+Substitution du RData de la carte des régions par une carte corrigée.
 
 # cnsa
 
