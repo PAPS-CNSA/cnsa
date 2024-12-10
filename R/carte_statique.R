@@ -42,11 +42,11 @@ if(any(!is.character(donnees$code_insee) | sapply(donnees$code_insee, nchar) != 
     mutate(code_insee = str_pad(code_insee, width = 3, side = "left", pad = "0"))
 }
   if(nivea_geo == "departements"){
-  donnees_sf_fusionnees <- left_join(france_shapefile_une_carte, donnees, by = "code_insee") %>% st_as_sf()
+  donnees_sf_fusionnees <- left_join(france_shapefile_departements, donnees, by = "code_insee") %>% st_as_sf()
   } else if(nivea_geo == "collectivites et departements"){
-    donnees_sf_fusionnees <- left_join(france_shapefile_Dept_collectivite, donnees, by = "code_insee") %>% st_as_sf()
+    donnees_sf_fusionnees <- left_join(france_shapefile_epci_dept, donnees, by = "code_insee") %>% st_as_sf()
   } else if(nivea_geo == "regions"){
-    donnees_sf_fusionnees <- left_join(france_shapefile_Regions, donnees, by = "code_insee") %>% st_as_sf()
+    donnees_sf_fusionnees <- left_join(france_shapefile_regions, donnees, by = "code_insee") %>% st_as_sf()
   }
 
   if(france_outre_mer == "Metropole"){
