@@ -91,7 +91,7 @@ creer_reference_finess <- function(origine = "GEOD") {
   base_spe <- base_spe %>% filter(!(FINESS %in% a_filtrer))
 
   for (annee in annees_finess) {
-    resultat[[year]] <- resultat[[year]] %>% filter(!(FINESS %in% a_filtrer))
+    resultat[[annee]] <- resultat[[annee]] %>% filter(!(FINESS %in% a_filtrer))
   }
 
   base_full <- base_full %>% filter(!(FINESS %in% a_filtrer))
