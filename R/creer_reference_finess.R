@@ -14,14 +14,12 @@ NULL
 #'
 #' @export
 
-creer_reference_finess <- function(origine = "GEOD") {
+creer_reference_finess <- function(origine = "GEOD", annee_ref = 2019) {
   if (origine == "GEOD") {
     repertoire_finess <- cnsa::config$chemins$finess
   } else if (origine == "VM") {
     repertoire_finess <- cnsa::config$chemins$finess_vm
   }
-
-
 
   annee_debut_finess <- cnsa::config$donnees$debut_finess
   annee_fin_finess <- cnsa::config$donnees$fin_finess
@@ -70,7 +68,6 @@ creer_reference_finess <- function(origine = "GEOD") {
   # On va, en prévision d'une imputation, prévoir une base full avec les places 2019 (ou d'autres années si pas dispo)
   # L'objectif est d'avoir, dans tous les cas, un nombre de places en 2019
 
-  annee_ref <- config$donnees$annee_ref
 
   liste_variables <- c("capinsHP", "capinsHT", "capinsAT", "capinsAJ", "capinsTOT", "statut_jur_agrege", "RMP", "DGP", "POLY", "TSA", "internat", "type_esms")
   base_spe <- base_full[,c("FINESS", "categetab", "PA_LARGE", "PA_RESTREINT", "PH", "libelle_categorie_regroup", "financeur", "code_domaine", "code_regroup_finess", "region")]
