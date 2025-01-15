@@ -1,4 +1,5 @@
-#' @importFrom dplyr group_by mutate distinct select left_join bind_rows if_else
+#' @importFrom dplyr group_by mutate distinct select left_join bind_rows if_else summarise
+#' @importFrom mice mice complete
 NULL
 
 #' Créer référence finess
