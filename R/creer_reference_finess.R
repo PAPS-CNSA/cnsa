@@ -5,7 +5,13 @@ NULL
 #'
 #' Crée une base de référence finess, utilisable pour du redressement, ou pour toute autre chose
 #'
-#' @return une liste d'années + un élément synthèse avec une valeur de référence pour chaque
+#' @return une liste d'années
+#' une base avec la dernière version de chaque finess
+#' un élément synthèse avec une valeur de référence pour chaque
+#' un tableau des capacités pour chaque année
+#' un tableau 0-1 des finess fermés-ouverts (capinsTOT à NA ou pas) chaque année
+#' un tableau de la démographique des structures par catégorie
+#'
 #' @export
 
 creer_reference_finess <- function(origine = "GEOD") {
