@@ -42,7 +42,7 @@ creer_reference_finess <- function(origine = "GEOD") {
       select(-capacite,-client)
 
     finess <- base_finess_reduite[[as.numeric(annee)]]
-    tempo <- structurer_donnees_finess(finess, repertoire_finess)
+    tempo <- structurer_donnees_finess(finess, repertoire_finess) # une base finess pour l'année retravaillée (une ligne = un finess)
     tempo$categetab <- as.character(tempo$categetab)
     tempo <- tempo %>% rename(FINESS = nofinesset)
 
@@ -64,25 +64,32 @@ creer_reference_finess <- function(origine = "GEOD") {
   # On va, en prévision d'une imputation, prévoir une base full avec les places 2019 (ou d'autres années si pas dispo)
   # L'objectif est d'avoir, dans tous les cas, un nombre de places en 2019
 
-  base_spe <- base_full[,c("FINESS", "categetab")]
-  base_spe <- base_spe %>% left_join(resultat[["2019"]] %>% select(c("FINESS", "capinsTOT", "PA_LARGE", "PA_RESTREINT", "PH", "RMP", "DGP", "POLY", "TSA", "internat")), by = "FINESS")
-  base_spe$a_faire <- rowSums(base_spe[, c("PA_LARGE", "PA_RESTREINT", "PH")], na.rm = T)
+  annee_ref <- config$donnees$annee_ref
 
-  base_spe <- base_spe[base_spe$a_faire >= 1,]
-  sum(is.na(base_spe$capinsTOT))
-  for (year in c("2020", "2018", "2021", "2017", "2022")) {
-    print(year)
-    finess_a_completer <- base_spe[(is.na(base_spe$capinsTOT) | (base_spe$capinsTOT==0) ) & !(base_spe$categetab %in% c("189", "190", "460")) , ]$FINESS
-    tempo <- resultat[[year]] %>% filter(FINESS %in% finess_a_completer) %>% select(FINESS, capinsTOT) %>% rename(capinsTOT_temp = capinsTOT)
-    base_spe <- base_spe %>% left_join(tempo, by = "FINESS")
-    base_spe[base_spe$FINESS %in% finess_a_completer,]$capinsTOT <-base_spe[base_spe$FINESS %in% finess_a_completer,]$capinsTOT_temp
-    base_spe <- base_spe %>% select(-capinsTOT_temp)
+  liste_variables <- c("capinsHP", "capinsHT", "capinsAT", "capinsAJ", "capinsTOT", "statut_jur_agrege", "RMP", "DGP", "POLY", "TSA", "internat", "type_esms")
+  base_spe <- base_full[,c("FINESS", "categetab", "PA_LARGE", "PA_RESTREINT", "PH", "libelle_categorie_regroup", "financeur", "code_domaine", "code_regroup_finess", "region")]
+  base_spe <- base_spe %>% left_join(resultat[[as.character(annee_ref)]] %>% select(all_of(c("FINESS", liste_variables))), by = "FINESS")
+  base_spe$champ <- rowSums(base_spe[,c("PA_RESTREINT", "PA_LARGE", "PH")], na.rm = T)
+  base_spe <- base_spe %>% filter(champ >= 1)
+
+  for (variable in liste_variables) {
+    # On cherche d'abord en annee_ref - 1 et annee_ref + 1, puis annee_ref - 2 et annee_ref + 2, etc
+    for (year in as.character(c(sort_by(setdiff(as.numeric(annees_finess), annee_ref), abs(setdiff(as.numeric(annees_finess), annee_ref) - annee_ref))))) {
+      base_spe <- finess_completer_places(base_spe, resultat, year, variable)
+    }
+    if (sum(is.na(base_spe[[variable]]) & base_spe$categetab %in% c("189", "190", "460"))>0) {
+      base_spe[is.na(base_spe[[variable]]) & base_spe$categetab %in% c("189", "190", "460"),][[variable]] <- 0 # Les SAAD n'ont pas de places
+    }
+
   }
-  base_spe[is.na(base_spe$capinsTOT) & base_spe$categetab=="460",]$capinsTOT <- 0 # Les SAAD n'ont pas de places
 
-  base_spe[base_spe$PA_RESTREINT == 0 | (base_spe$PA_RESTREINT==1 & (!is.na(base_spe$capinsTOT) | (base_spe$capinsTOT>0))),]
+  # S'il reste des places à 0 ailleurs que dans les structures dédiées, on les place à NA pour imputer
+  # On ne fait cela que pour capinsTOT (pour le reste, c'est possible)
 
+  base_spe[!is.na(base_spe$capinsTOT) & base_spe$capinsTOT == 0 & !base_spe$categetab %in% c("189", "190", "460"), ]$capinsTOT <- NA
 
+  imput <- mice(base_spe, printFlag = F, maxit = 10, m = 6, warnings = F, seed = 123) # nolint: line_length_linter
+  base_spe <- complete(imput, 5)
 
   # On filtre les finess qui n'ont jamais eu de places côté PA_RESTREINT
 
@@ -96,9 +103,33 @@ creer_reference_finess <- function(origine = "GEOD") {
 
   base_full <- base_full %>% filter(!(FINESS %in% a_filtrer))
 
+
+  capins <- base_full %>% select(FINESS, region, departement, categetab, code_regroup_finess)
+  for (annee in sort(annees_finess)) {
+    capins <- capins %>% left_join(resultat[[annee]] %>% select(FINESS, capinsTOT), by = "FINESS")
+    capins[[annee]] <- capins[["capinsTOT"]]
+    capins <- capins %>% select(-capinsTOT)
+  }
+
+  capins_bool <- base_full %>% select(FINESS, region, departement, categetab, code_regroup_finess)
+  for (annee in sort(annees_finess)) {
+    capins_bool <- capins_bool %>% left_join(resultat[[annee]] %>% select(FINESS, capinsTOT), by = "FINESS")
+    capins_bool[[annee]] <- as.numeric(!is.na(capins_bool[["capinsTOT"]]))
+    capins_bool <- capins_bool %>% select(-capinsTOT)
+  }
+
+  demo <- data.frame(unique(base_full[["categetab"]]))
+  names(demo) <- c("categetab")
+  for (annee in sort(annees_finess)) {
+    demo <- demo %>% left_join(resultat[[annee]] %>% group_by(categetab) %>% summarise(nb = n()), by = "categetab")
+  }
+  names(demo) <- c("categetab", sort(annees_finess))
+
   resultat[["SYNTHESE"]] <- base_full
-  resultat[["SPE_2019"]] <- base_spe
+  resultat[[paste0("SPE_", annee_ref)]] <- base_spe
+  resultat[["CAPACITE"]] <- capins
+  resultat[["CAP_BOOL"]] <- capins_bool
+  resultat[["DEMO_ETAB"]] <- demo
 
   return(resultat)
 }
-
