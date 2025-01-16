@@ -8,6 +8,7 @@ NULL
 #' @param finess_full résultat de creer_reference_finess qui contient un tableau 0-1 indiquant par année si un FINESS est ouvert
 #' @param tab tableau avec au moins une colonne FINESS et une variable numérique à synthétiser
 #' @param groupe catégorie selon laquelle on veut regrouper : "categetab", "code_regroup_finess", "region" ou "departement"
+#' @param variable variable que l'on veut synthétiser sous forme de chaîne de caractères
 #' @param annee année étudiée sous forme de chaîne de caractères
 #'
 #' @return un tableau avec trois colonnes :
