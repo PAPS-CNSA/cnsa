@@ -13,7 +13,7 @@ Ce package contient différentes fonctions utiles dans le cadre du travail de PA
 
 Other contributors:
 \itemize{
-  \item  Caisse Nationale pour la Solidarité et l'Autonomie [copyright holder]
+  \item cre Caisse Nationale pour la Solidarité et l'Autonomie
 }
 
 }
