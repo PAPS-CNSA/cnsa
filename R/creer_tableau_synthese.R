@@ -12,8 +12,8 @@ NULL
 #' @param annee année étudiée sous forme de chaîne de caractères
 #'
 #' @return un tableau avec trois colonnes :
-#'  groupe : la liste des catégories
-#'  variable : somme des valeurs pour les FINESS ouverts pour chaque catégorie
+#'  groupe : la liste des catégories ;
+#'  variable : somme des valeurs pour les FINESS ouverts pour chaque catégorie ;
 #'  nombre : nombre de FINESS ouverts dans chaque catégorie
 #'
 #' @export

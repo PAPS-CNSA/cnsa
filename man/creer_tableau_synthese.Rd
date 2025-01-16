@@ -13,12 +13,14 @@ creer_tableau_synthese(finess_full, tab, groupe, variable, annee)
 
 \item{groupe}{catégorie selon laquelle on veut regrouper : "categetab", "code_regroup_finess", "region" ou "departement"}
 
+\item{variable}{variable que l'on veut synthétiser sous forme de chaîne de caractères}
+
 \item{annee}{année étudiée sous forme de chaîne de caractères}
 }
 \value{
 un tableau avec trois colonnes :
-groupe : la liste des catégories
-variable : somme des valeurs pour les FINESS ouverts pour chaque catégorie
+groupe : la liste des catégories ;
+variable : somme des valeurs pour les FINESS ouverts pour chaque catégorie ;
 nombre : nombre de FINESS ouverts dans chaque catégorie
 }
 \description{
