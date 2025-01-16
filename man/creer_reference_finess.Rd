@@ -7,13 +7,8 @@
 creer_reference_finess(origine = "GEOD", annee_ref = 2019)
 }
 \value{
-une liste d'années
-une base avec la dernière version de chaque finess
-un élément synthèse avec une valeur de référence pour chaque
-un tableau des capacités pour chaque année
-un tableau 0-1 des finess fermés-ouverts (capinsTOT à NA ou pas) chaque année
-un tableau de la démographique des structures par catégorie
+rien
 }
 \description{
-Crée une base de référence finess, utilisable pour du redressement, ou pour toute autre chose
+Crée une base de référence finess, utilisable pour du redressement, ou pour toute autre chose et l'enregistre
 }

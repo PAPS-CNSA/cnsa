@@ -5,7 +5,7 @@ NULL
 
 #' Créer référence finess
 #'
-#' Crée une base de référence finess, utilisable pour du redressement, ou pour toute autre chose
+#' Crée une base de référence finess, utilisable pour du redressement, ou pour toute autre chose et l'enregistre
 #'
 #' @return une liste d'années
 #' une base avec la dernière version de chaque finess
@@ -135,6 +135,8 @@ creer_reference_finess <- function(origine = "GEOD", annee_ref = 2019) {
   resultat[["CAPACITE"]] <- capins
   resultat[["CAP_BOOL"]] <- capins_bool
   resultat[["DEMO_ETAB"]] <- demo
+
+  saveRDS(resultat, paste0(repertoire_finess, "finess_full.rds"))
 
   return(resultat)
 }
