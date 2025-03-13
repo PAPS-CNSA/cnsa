@@ -12,6 +12,8 @@ NULL
 #' un élément synthèse avec une valeur de référence pour chaque
 #' un tableau des capacités pour chaque année
 #' un tableau 0-1 des finess fermés-ouverts (capinsTOT à NA ou pas) chaque année
+#' un tableau 0-1 des finess fermés-ouverts pour l'hébergement permanent (capinsHP à NA ou pas) chaque année
+#' un tableau 0-1 des finess fermés-ouverts pour l'hébergement temporaire (capinsHT à NA ou pas) chaque année
 #' un tableau de la démographique des structures par catégorie
 #'
 #' @export
@@ -123,6 +125,20 @@ creer_reference_finess <- function(origine = "GEOD", annee_ref = 2019) {
     capins_bool <- capins_bool %>% select(-capinsTOT)
   }
 
+  capins_hp_bool <- base_full %>% select(FINESS, region, departement, categetab, code_regroup_finess)
+  for (annee in sort(annees_finess)) {
+    capins_hp_bool <- capins_hp_bool %>% left_join(resultat[[annee]] %>% select(FINESS, capinsHP), by = "FINESS")
+    capins_hp_bool[[annee]] <- as.numeric(!is.na(capins_hp_bool[["capinsHP"]]))
+    capins_hp_bool <- capins_hp_bool %>% select(-capinsHP)
+  }
+
+  capins_ht_bool <- base_full %>% select(FINESS, region, departement, categetab, code_regroup_finess)
+  for (annee in sort(annees_finess)) {
+    capins_ht_bool <- capins_ht_bool %>% left_join(resultat[[annee]] %>% select(FINESS, capinsHT), by = "FINESS")
+    capins_ht_bool[[annee]] <- as.numeric(!is.na(capins_ht_bool[["capinsHT"]]))
+    capins_ht_bool <- capins_ht_bool %>% select(-capinsHT)
+  }
+
   demo <- data.frame(unique(base_full[["categetab"]]))
   names(demo) <- c("categetab")
   for (annee in sort(annees_finess)) {
@@ -134,6 +150,8 @@ creer_reference_finess <- function(origine = "GEOD", annee_ref = 2019) {
   resultat[[paste0("SPE_", annee_ref)]] <- base_spe
   resultat[["CAPACITE"]] <- capins
   resultat[["CAP_BOOL"]] <- capins_bool
+  resultat[["CAP_HP_BOOL"]] <- capins_hp_bool
+  resultat[["CAP_HT_BOOL"]] <- capins_ht_bool
   resultat[["DEMO_ETAB"]] <- demo
 
   saveRDS(resultat, paste0(repertoire_finess, "finess_full.rds"))

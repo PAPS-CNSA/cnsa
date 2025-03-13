@@ -97,4 +97,6 @@ france_shapefile_regions <- france_shapefile_regions %>% left_join(liste_regions
 
 france_shapefile_regions <- france_shapefile_regions %>% st_as_sf() %>% group_by(REGION, NOM_REG) %>% summarise(geom = st_union(geom), .groups = "drop") %>% mutate(geom = st_buffer(geom, 0))
 
+france_shapefile_regions <- france_shapefile_regions %>% rename(code_insee = "REGION") %>% mutate(code_insee = str_pad(code_insee, width = 3, side = "left", pad = "0"))
+
 usethis::use_data(france_shapefile_regions, overwrite = TRUE)
