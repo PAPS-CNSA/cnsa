@@ -4,7 +4,11 @@
 \alias{format_liste_a_vers_tablo}
 \title{Format liste Années vers Liste variables}
 \usage{
-format_liste_a_vers_tablo(liste_annees)
+format_liste_a_vers_tablo(
+  liste_a,
+  var_liste = "ANNEE",
+  format_sortie = "data.frame"
+)
 }
 \arguments{
 \item{liste_annees}{Une liste de dataframes, chaque élément de la liste représentant une année. La première colonne représente la variable identifiante}

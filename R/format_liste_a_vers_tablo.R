@@ -1,5 +1,4 @@
-#' @importFrom tidyr pivot_wider gather
-#' @importFrom dplyr mutate bind_rows
+#' @importFrom data.table rbindlist
 NULL
 
 #' Format liste Années vers Liste variables
@@ -10,14 +9,13 @@ NULL
 #' @return Un tableau, avec une colonne "ANNE"
 #' @export
 
-format_liste_a_vers_tablo <- function(liste_annees) {
+format_liste_a_vers_tablo <- function(liste_a,
+                                      var_liste = "ANNEE",
+                                      format_sortie = "data.frame") {
+  # Permet de passer d'un format liste variable à un format tablo
 
-  long_annees <- lapply(names(liste_annees), function(year) {
-    nom_colonnes_id <- names(liste_annees[[year]])[1]
-    liste_annees[[year]] %>%
-      gather(key = "variable", value = "value", -!!(nom_colonnes_id)) %>%
-      mutate(ANNEE = year)
-  }) %>% bind_rows() %>% pivot_wider(names_from = variable, values_from = value)
+  tablo <- rbindlist(liste_a, idcol = var_liste)
+  if (format_sortie == "data.frame") tablo <- as.data.frame(tablo)
 
-  return(long_annees)
+  return(tablo)
 }
