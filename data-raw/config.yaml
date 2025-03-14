@@ -2,6 +2,7 @@ chemins:
   insee: "G:/08. DPE/11. STATISTIQUES/04. Traitements Statistiques/14. INSEE/"
   finess: "G:/08. DPE/11. STATISTIQUES/01. Repos/shiny-finess/Data/"
   finess_vm: "C:/CNSA/DONNEES/FINESS/"
+  finess_sidata: "E:/CNSA/DONNEES/04. FINESS/"
 donnees:
   debut_finess: 2017
   fin_finess: 2024
