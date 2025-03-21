@@ -6,37 +6,16 @@ NULL
 #'
 #' Cette fonction transforme une liste de variables (chaque élément de la liste = une variable, chaque colonne = une année)
 #' en une liste de variables
-#' @param liste_variables Une liste de dataframes, chaque élément de la liste représentant une variable La première colonne représente la variable identifiante
+#' @param liste_v Une liste de dataframes, chaque élément de la liste représentant une variable La première colonne représente la variable identifiante
+#' @param variable_ident le nom de la variable identifiante. Par défaut, "FINESS"
+#' @param variable_temporelle le nom de la variable année. Par défaut, "ANNEE"
 #' @return Une liste de dataframes, cette fois chaque élément représente une année
 #' @export
 
-format_liste_v_vers_liste_a <- function(liste_variables) {
-  variable_id <- names(liste_variables[[1]])[1] # La variable identifiante est en première colonne
+format_liste_v_vers_liste_a <- function(liste_v, variable_ident= "FINESS", variable_temporelle="ANNEE", format_sortie="data.frame") {
+  tablo <- format_liste_v_vers_tablo(liste_v, variable_ident, variable_temporelle, format_sortie)
+  liste_a <- format_tablo_vers_liste_a(tablo, variable_ident, variable_temporelle, format_sortie)
+  if (format_sortie == "data.frame") liste_a <- lapply(liste_a, as.data.frame)
 
-  long_vars <- lapply(names(liste_variables), function(var_name) {
-    if (var_name != "ANNEE") {
-      df <- liste_variables[[var_name]]
-      df %>%
-        gather(key = "ANNEE", value = "value", -!!(variable_id)) %>%
-        mutate(variable = var_name)
-    }
-  }) %>% bind_rows()
-
-  liste_annees <- unique(long_vars$ANNEE)
-
-  # Pivoter les données pour obtenir une liste où chaque élément représente une année
-  liste_annees_result <- long_vars %>%
-    group_by("ANNEE") %>%
-    group_split()
-
-  liste_annees_result <- lapply(liste_annees_result, function(df) {
-    df %>%
-      select(-"ANNEE") %>%
-      spread(key = "variable", value = value)
-  })
-
-  # Nommer la liste d'après les années
-  names(liste_annees_result) <- unique(long_vars$ANNEE)
-  return(liste_annees_result)
-
+  return(liste_a)
 }

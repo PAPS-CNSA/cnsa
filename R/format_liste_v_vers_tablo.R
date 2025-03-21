@@ -28,7 +28,7 @@ format_liste_v_vers_tablo <- function(liste_v, variable_ident= "FINESS", variabl
 
   formula <- as.formula(paste(variable_ident, "+", variable_temporelle, "~ variable"))
   dt_large <- dcast(dt_long, formula, value.var = "valeur")
-  if (format_sortie == "data.frame") liste_v <- lapply(liste_v, as.data.frame)
+  if (format_sortie == "data.frame") dt_large <- as.data.frame(dt_large)
 
   return(dt_large)
 }

@@ -13,5 +13,7 @@
 format_liste_a_vers_liste_v <- function(liste_annees, variable_ident = "FINESS", variable_temporelle = "ANNEE", format_sortie = "data.frame") {
   tablo <- format_liste_a_vers_tablo(liste_annees, var_liste = variable_temporelle, format_sortie)
   liste_v <- format_tablo_vers_liste_v(tablo, variable_ident, variable_temporelle)
+  if (format_sortie == "data.frame") liste_v <- lapply(liste_v, as.data.frame)
+
   return(liste_v)
 }
