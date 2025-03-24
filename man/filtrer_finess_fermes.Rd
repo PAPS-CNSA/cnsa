@@ -4,10 +4,12 @@
 \alias{filtrer_finess_fermes}
 \title{Dans un tableau de données, avec un FINESS par ligne et les années en colonne, remplace les valeurs des années où le FINESS est fermé par NA}
 \usage{
-filtrer_finess_fermes(tab)
+filtrer_finess_fermes(tab, finess_full = charger_reference_finess())
 }
 \arguments{
 \item{tab}{tableau de données, une colonne "FINESS" et des colonnes d'années}
+
+\item{finess_full}{résultat de creer_reference_finess ou charger_reference_finess qui contient un tableau 0-1 indiquant par année si un FINESS est ouvert}
 }
 \value{
 un tableau de données avec les valeurs des années où le FINESS est fermé remplacées par NA

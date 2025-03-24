@@ -35,8 +35,8 @@ test_that("format_liste_v_vers_tablo garde toutes les valeurs correctement", {
   result <- format_liste_v_vers_tablo(liste_v)
 
   # Extraction correcte des valeurs sous forme de vecteurs numériques
-  expect_equal(result[FINESS == 1 & ANNEE == "2020", Var1][[1]], 10)
-  expect_equal(result[FINESS == 2 & ANNEE == "2021", Var2][[1]], 250)
+  expect_equal(result[result$FINESS == 1 & result$ANNEE == "2020", "Var1"][[1]], 10)
+  expect_equal(result[result$FINESS == 2 & result$ANNEE == "2021", "Var2"][[1]], 250)
 })
 
 test_that("format_liste_v_vers_tablo fonctionne avec des noms d'identifiants et années différents", {
@@ -97,7 +97,7 @@ test_that("Conversion tablo -> liste_v -> tablo conserve les données", {
 
   # Convertir tablo en liste_v puis revenir en tablo
   liste_v <- format_tablo_vers_liste_v(tablo_original)
-  tablo_result <- format_liste_v_vers_tablo(liste_v)
+  tablo_result <- setDT(format_liste_v_vers_tablo(liste_v))
 
   # Forcer le type de ANNEE pour qu'il corresponde à l'original
   tablo_result[, ANNEE := as.numeric(as.character(ANNEE))]
