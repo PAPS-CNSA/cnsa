@@ -8,7 +8,8 @@ imputation_taux_croissance(
   tablo,
   table_reference = NA,
   variable_groupe = NA,
-  affichage = FALSE
+  affichage = FALSE,
+  taux_croissance = NULL
 )
 }
 \arguments{
