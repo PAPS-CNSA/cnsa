@@ -1,7 +1,7 @@
-#' @importFrom dplyr select group_by filter rename ungroup summarize group_by left_join mutate row_number
+#' @importFrom dplyr select group_by filter rename ungroup summarize group_by left_join mutate row_number summarise
 #' @importFrom tidyr pivot_wider
 #' @importFrom lubridate year
-#' @importFrom readr read_delim
+#' @importFrom readr read_delim locale
 NULL
 
 #' Structurer les donnees de Finess
@@ -24,7 +24,7 @@ structurer_donnees_finess <- function(base, repertoire_finess) {
   #Charger la table de correspondance categorie
   #Attention la catégorie 362 - ESLD est une catégorie sanitaire nb de places = NA
   fichier_a_charger <- paste0(repertoire_finess,"corresp_categorie_complete.csv")
-  corresp_categorie <- read_delim(fichier_a_charger, delim = ";")
+  corresp_categorie <- read_delim(fichier_a_charger, delim = ";", locale = locale(encoding ="latin1"))
 
   # Merger la table categorie avec la base chargee finess
   base <- base %>%
