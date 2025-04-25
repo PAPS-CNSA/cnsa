@@ -43,7 +43,7 @@ correction_simple_deux_annees <- function(tablo, ordre = TRUE, taux_croissance =
     if (is.null(taux_croissance)) {
       taux_croissance <- sum(tablo[cylindre, nom1])/sum(tablo[cylindre, nom2]) - 1
     } else {
-      taux_croissance <- -taux_croissance
+      taux_croissance <- -taux_croissance/(1+taux_croissance) # On inverse le taux de croissance pour le redressement
     }
     if (!is.infinite(taux_croissance) & !is.nan(taux_croissance) & !is.na(taux_croissance)) tablo[a_redresser, nom1] <- tablo[a_redresser, nom2] * (1 + taux_croissance)
     return(tablo[, nom1])
