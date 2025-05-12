@@ -154,6 +154,13 @@ creer_reference_finess <- function(origine = "GEOD", annee_ref = 2019) {
   resultat[["CAP_HT_BOOL"]] <- capins_ht_bool
   resultat[["DEMO_ETAB"]] <- demo
 
+  # Deux FINESS ont des dates d'ouverture fausses dans la base finess
+
+  for (name in c(annees_finess, "SYNTHESE")) {
+    resultat[[name]][resultat[[name]]$FINESS == "450022561", "dateouvert"] <- "2020-02-24"
+    resultat[[name]][resultat[[name]]$FINESS == "780806493", "dateouvert"] <- "1980-10-01"
+  }
+
   saveRDS(resultat, paste0(repertoire_finess, "finess_full.rds"))
 
   return(resultat)
