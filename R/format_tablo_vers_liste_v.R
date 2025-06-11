@@ -28,6 +28,9 @@ NULL
 
 format_tablo_vers_liste_v <- function(tablo, variable_ident = "FINESS", variable_temporelle = "ANNEE", format_sortie = "data.frame") {
   tablo <- as.data.table(tablo)
+  if (tablo[, .N, by = c(variable_ident, variable_temporelle)][N > 1, .N] > 0) {
+    stop("Le tableau contient des doublons pour la combinaison de variable identifiante et temporelle. Veuillez vérifier les données.")
+  }
   vars <- setdiff(names(tablo), c(variable_ident, variable_temporelle))
   liste_v <- lapply(vars, function(v) {
     dcast(tablo, formula = as.formula(paste(variable_ident, "~", variable_temporelle)), value.var = v)

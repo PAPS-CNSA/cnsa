@@ -27,6 +27,9 @@ format_liste_v_vers_tablo <- function(liste_v, variable_ident= "FINESS", variabl
                   value.name = "valeur")
 
   formula <- as.formula(paste(variable_ident, "+", variable_temporelle, "~ variable"))
+  if (dt_long[, .N, by = c(variable_ident, variable_temporelle, "variable")][N > 1, .N] > 0) {
+    stop("Le tableau contient des doublons pour la combinaison de variable identifiante et temporelle. Veuillez vérifier les données.")
+  }
   dt_large <- dcast(dt_long, formula, value.var = "valeur")
   if (format_sortie == "data.frame") dt_large <- as.data.frame(dt_large)
 
