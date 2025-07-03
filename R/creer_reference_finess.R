@@ -1,5 +1,6 @@
 #' @importFrom dplyr group_by mutate distinct select left_join bind_rows if_else summarise
 #' @importFrom mice mice complete
+#' @importFrom readxl read_xlsx
 
 NULL
 
@@ -30,6 +31,9 @@ creer_reference_finess <- function(origine = "GEOD", annee_ref = 2019) {
 
   annees_finess <- as.character(c(annee_fin_finess:annee_debut_finess))
   load(paste0(repertoire_finess, "Base_Finess.RData"))
+
+  file_active_cmpp <- read_xlsx(paste0(repertoire_finess,"File_active_CMPP.xlsx"))
+
   resultat <- list()
   for (annee in annees_finess) {
     print(annee)
@@ -57,6 +61,12 @@ creer_reference_finess <- function(origine = "GEOD", annee_ref = 2019) {
     tempo <- tempo %>%
       left_join(tableau_internat, by = c("FINESS" = "nofinesset")) %>%
       left_join(tableau_deficience, by = c("FINESS" = "nofinesset"))
+
+    # ajout des files actives des cmpp
+    tempo <- tempo %>%
+      left_join(file_active_cmpp[!is.na(file_active_cmpp[[annee]]),] %>%
+                  select(FINESS, annee) %>%
+                  rename("fileactive" = annee), by = "FINESS")
 
     resultat[[annee]] <- tempo
     if (annee == annees_finess[1]) { # On créee une base complète avec la dernière version de chaque Finess
