@@ -16,7 +16,8 @@ carte_statique(
   couleurs = "RdYlBu",
   medaillon = TRUE,
   medaillon_emprise = "IDF",
-  leg_no_data = "Absence de donnée"
+  leg_no_data = "Absence de donnée",
+  couleurs_inversees = FALSE
 )
 }
 \arguments{
@@ -43,6 +44,8 @@ carte_statique(
 \item{medaillon_emprise}{Emprise du médaillon.Par défaut, il s'agit de l'ïle-de-France. Pour avoir une autre empprise, il faut donner une combinaison de valeurs au format trois caractères. Par exemple, pour l'ïle-de-France la combinaison de valeurs est c("075", "077", "078", "091", "092", "093", "094", "095").}
 
 \item{leg_no_data}{Commentaire dans la légende pour les observations sans donnée. Par défaut, il affiche 'Absence de donnée".}
+
+\item{couleurs_inversees}{Inverse l'ordre des couleurs de la palette utilisée. Par défaut, l'argument est à FALSE.}
 }
 \description{
 Fonction principale pour faire une carte statique à l'échelle départementale.

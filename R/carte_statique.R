@@ -22,6 +22,7 @@ NULL
 #' @param medaillon Si TRUE (défaut) une carte médaillon affiche l'Île-De-France.
 #' @param medaillon_emprise Emprise du médaillon.Par défaut, il s'agit de l'ïle-de-France. Pour avoir une autre empprise, il faut donner une combinaison de valeurs au format trois caractères. Par exemple, pour l'ïle-de-France la combinaison de valeurs est c("075", "077", "078", "091", "092", "093", "094", "095").
 #' @param leg_no_data Commentaire dans la légende pour les observations sans donnée. Par défaut, il affiche 'Absence de donnée".
+#' @param couleurs_inversees Inverse l'ordre des couleurs de la palette utilisée. Par défaut, l'argument est à FALSE.
 #' @export
 
 carte_statique <- function(donnees,
@@ -35,7 +36,8 @@ carte_statique <- function(donnees,
                            couleurs = "RdYlBu", # Couleurs adaptées aux daltoniens.
                            medaillon = TRUE,
                            medaillon_emprise = "IDF",
-                           leg_no_data = "Absence de donnée"){
+                           leg_no_data = "Absence de donnée",
+                           couleurs_inversees = FALSE){
 
 if(any(!is.character(donnees$code_insee) | sapply(donnees$code_insee, nchar) != 3)){
   donnees <- donnees %>% mutate(code_insee = as.character(code_insee)) %>%
@@ -63,15 +65,23 @@ if(medaillon_emprise == "IDF"){
   IDF <- donnees_sf[emprise, ]
 }
 
+# Définir les couleurs en utilisant brewer.pal
+if(isTRUE(couleurs_inversees)){
 
-brewer.pal(nbre_classes, couleurs)
+  cols <- rev(brewer.pal(nbre_classes, couleurs))
+
+} else{
+  cols <- brewer.pal(nbre_classes, couleurs)
+}
+
+
 
 mf_theme("brutal", bg = "white", mar = c(0, 0, 0, 0))
 mf_map(x = donnees_sf, col = "white")
 
 if(isTRUE(choro)){
 
-  mf_map(x = donnees_sf, var, type = "choro",
+  mf_map(x = donnees_sf, var, type = "choro", pal = cols,
          breaks = discretisation, nbreaks = nbre_classes,
          leg_pos = "bottomleft",
          leg_title = titre_legende,
@@ -83,20 +93,20 @@ if(isTRUE(choro)){
                            breaks = discretisation, nbreaks = nbre_classes)
 
     mf_inset_on(x = IDF, pos = "topright")
-    mf_map(x = IDF, var, type = "choro", breaks = breaks, nbreaks = nbre_classes, leg_pos = NA)
+    mf_map(x = IDF, var, type = "choro", breaks = breaks, nbreaks = nbre_classes, leg_pos = NA, pal = cols)
     mf_inset_off()
   }
 
 } else {
 
-  mf_map(x = donnees_sf, var, type = "prop", col = "azure",
+  mf_map(x = donnees_sf, var, type = "prop", pal = cols,
          leg_pos = "bottomleft",
          leg_title = titre_legende,
          leg_no_data = leg_no_data)
 
   if(isTRUE(medaillon) && nivea_geo != "regions"){
     mf_inset_on(x = IDF, pos = "topright")
-    mf_map(x = IDF, var, type = "prop")
+    mf_map(x = IDF, var, type = "prop", pal = cols)
     mf_inset_off()
     }
   }
