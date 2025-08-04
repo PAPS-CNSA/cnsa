@@ -1,6 +1,6 @@
 4 avril 2025
 
-La fonction carte_statique() peut à présenter utiliser toutes les palettes de couleur de RColorRColorBrewer. Le package readxl a aussi été ajouté parmi les imports dans le fichier DESCRIPTION.R.
+La fonction carte_statique() peut à présent utiliser toutes les palettes de couleur de RColorRColorBrewer. Le package readxl a aussi été ajouté parmi les imports dans le fichier DESCRIPTION.R.
 
 v. 1.1.4 (10 décembre 2024)
 
