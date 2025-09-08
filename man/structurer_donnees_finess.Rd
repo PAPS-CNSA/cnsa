@@ -4,7 +4,7 @@
 \alias{structurer_donnees_finess}
 \title{Structurer les donnees de Finess}
 \usage{
-structurer_donnees_finess(base, champ_pa = c(202, 207, 500, 501, 502))
+structurer_donnees_finess(base, repertoire_finess)
 }
 \arguments{
 \item{base}{base finess de l'année de référence (une année de base_finess_reduite)}

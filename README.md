@@ -1,3 +1,14 @@
+4 août 2025
+
+La fonction carte_statique() peut à présent utiliser toutes les palettes de couleur de RColorRColorBrewer. Le package readxl a aussi été ajouté parmi les imports dans le fichier DESCRIPTION.R.
+
+v. 1.1.4 (10 décembre 2024)
+
+Le fichier DATASET.R a été complété de telle sorte que les fichiers shapefile utilisés par carte_statique() soient générés.
+
+v 1.1.3 (2 décembre 2024)
+
+Substitution du RData de la carte des régions par une carte corrigée.
 
 # cnsa
 

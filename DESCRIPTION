@@ -1,10 +1,10 @@
 Package: cnsa
 Title: Fonctions utiles pour le pôle PAPS de la CNSA
-Version: 1.1.1
+Version: 1.1.4
 Authors@R: 
     c(
       person(given = "Aurélien", family = "Fortin", email = "aurelien.fortin@cnsa.fr", role = c("aut", "cre")),
-      person(family = "Caisse Nationale pour la Solidarité et l'Autonomie", role = "cph")
+      person(family = "Caisse Nationale pour la Solidarité et l'Autonomie", role = c("cph"))
     )
 Description: Ce package contient différentes fonctions utiles dans le cadre du travail de PAPS à la CNSA. 
   En particulier, différentes fonctions de manipulations de données, une fonction qui permet d'inverser les "/" en copiant
@@ -12,7 +12,6 @@ Description: Ce package contient différentes fonctions utiles dans le cadre du 
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
 Language: fr
 Suggests: 
     testthat (>= 3.0.0)
@@ -34,7 +33,14 @@ Imports:
     lubridate,
     purrr,
     fitdistrplus,
+    readr,
+    RColorBrewer,
+    mapsf,
+    stringr,
+    mice,
+    readxl,
     htmltools
 Depends: 
     R (>= 2.10)
 LazyData: true
+RoxygenNote: 7.3.2

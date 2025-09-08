@@ -1,7 +1,4 @@
-#' @importFrom tidyr pivot_longer
-#' @importFrom dplyr mutate select full_join
-#' @importFrom purrr imap
-#' @importFrom utils txtProgressBar setTxtProgressBar
+#' @importFrom data.table melt dcast as.data.table
 NULL
 
 #' Transforme une liste de variables en un tableau
@@ -9,40 +6,32 @@ NULL
 #' Liste de variables = liste de tableaux, première colonne = variable identifiante, les suivantes = des années
 #'
 #' @param liste_v une liste de variables
+#' @param variable_ident le nom de la variable identifiante. Par défaut, "FINESS"
+#' @param variable_temporelle le nom de la variable année. Par défaut, "ANNEE"
 #' @return un tablo, i.e. une grand tableau avec en première colonne la variable identifiante, en 2e les années (sur plusieurs lignes), puis les autres colonnes sont les variables
 #' @export
 
-format_liste_v_vers_tablo <- function(liste_v) {
-  # Permet de passer d'un format liste variable à un format tablo
-
-  # On met une petite fonction imbriquée car elle ne sert que là :
-  transformer_et_ajouter_nom <- function(df, nom_variable) {
-    df %>%
-      pivot_longer(
-        cols = -FINESS,
-        names_to = "ANNEE",
-        values_to = nom_variable
-      ) %>%
-      mutate(VARIABLE = nom_variable) %>% select(-VARIABLE)
+format_liste_v_vers_tablo <- function(liste_v, variable_ident= "FINESS", variable_temporelle="ANNEE", format_sortie="data.frame") {
+  if (length(liste_v) == 0) {
+    return(data.table(FINESS = integer(), ANNEE = character()))
   }
 
-  # Puis, l'idée est de transformer chaque élément de la liste de tableau, puis de les fusionner les uns avec les autres
+  resultat <- rbindlist(lapply(names(liste_v), function(var_name) {
+    dt <- as.data.table(liste_v[[var_name]])  # Convertir en data.table
+    dt[, variable := var_name]  # Ajouter une colonne avec le nom de la variable
+    return(dt)
+  }), use.names = TRUE, fill = TRUE)  # Fusionner tous les tableaux
 
-  liste_tableaux <- imap(liste_v, transformer_et_ajouter_nom)
+  dt_long <- melt(resultat, id.vars = c(variable_ident, "variable"),
+                  variable.name = variable_temporelle,
+                  value.name = "valeur")
 
-  # Ensuite, on fusionne tous les tableaux. On le fait avec une boucle - peut être pas optimal - dans le but de pouvoir afficher une barre de progrès
-
-  grand_tableau <- list_tableaux_long[[1]]
-  var_identifiante <- names(grand_tableau)[1]
-  progress_bar <- txtProgressBar(min = 0, max = length(list_tableaux_long), style = 3)
-
-  # Fusionner les tableaux avec une barre de progression
-  for (i in 2:length(list_tableaux_long)) {
-    grand_tableau <- full_join(grand_tableau, list_tableaux_long[[i]], by = c(var_identifiante, "ANNEE"))
-    setTxtProgressBar(progress_bar, i)
-
+  formula <- as.formula(paste(variable_ident, "+", variable_temporelle, "~ variable"))
+  if (dt_long[, .N, by = c(variable_ident, variable_temporelle, "variable")][N > 1, .N] > 0) {
+    stop("Le tableau contient des doublons pour la combinaison de variable identifiante et temporelle. Veuillez vérifier les données.")
   }
-  close(progress_bar)
+  dt_large <- dcast(dt_long, formula, value.var = "valeur")
+  if (format_sortie == "data.frame") dt_large <- as.data.frame(dt_large)
 
-  return(grand_tableau)
+  return(dt_large)
 }

@@ -4,10 +4,19 @@
 \alias{format_liste_v_vers_liste_a}
 \title{Format liste Années vers Liste variables}
 \usage{
-format_liste_v_vers_liste_a(liste_variables)
+format_liste_v_vers_liste_a(
+  liste_v,
+  variable_ident = "FINESS",
+  variable_temporelle = "ANNEE",
+  format_sortie = "data.frame"
+)
 }
 \arguments{
-\item{liste_variables}{Une liste de dataframes, chaque élément de la liste représentant une variable La première colonne représente la variable identifiante}
+\item{liste_v}{Une liste de dataframes, chaque élément de la liste représentant une variable La première colonne représente la variable identifiante}
+
+\item{variable_ident}{le nom de la variable identifiante. Par défaut, "FINESS"}
+
+\item{variable_temporelle}{le nom de la variable année. Par défaut, "ANNEE"}
 }
 \value{
 Une liste de dataframes, cette fois chaque élément représente une année

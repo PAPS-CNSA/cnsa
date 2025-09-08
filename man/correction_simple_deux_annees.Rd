@@ -4,13 +4,15 @@
 \alias{correction_simple_deux_annees}
 \title{Correction Simple Basée sur le Taux de Croissance entre Deux Années}
 \usage{
-correction_simple_deux_annees(tablo, ordre = TRUE)
+correction_simple_deux_annees(tablo, ordre = TRUE, taux_croissance = NULL)
 }
 \arguments{
 \item{tablo}{Un dataframe avec deux colonnes: la première représente l'année 1 et la deuxième représente l'année 2.}
 
 \item{ordre}{Si \code{TRUE}, la deuxième colonne est imputée à partir de la première colonne.
 Si \code{FALSE}, la première colonne est imputée à partir de la deuxième colonne. Par défaut, cette valeur est \code{TRUE}.}
+
+\item{taux_croissance}{NULL ou un taux de croissance à utiliser}
 }
 \value{
 Une colonne de dataframe avec des valeurs manquantes imputées.

@@ -22,7 +22,7 @@ NULL
 #' print(res)
 #'
 #' @export
-enlever_valeurs_extremes <- function(tableau, p_min, p_max) {
+enlever_valeurs_extremes <- function(tableau, p_min = 0.01, p_max = 0.99) {
   # On enlève les valeurs extrêmes pour chaque colonne numérique du tableau
   # Nécessite le package dplyr
 
@@ -33,8 +33,8 @@ enlever_valeurs_extremes <- function(tableau, p_min, p_max) {
 
   # On recherche les bornes inf et sup qui correspondent aux distribution de probabilité p_min et p_max
   bounds <- lapply(numeric_cols, function(col) {
-    lower_bound <- quantile(resultat[[col]], probs = 0.00, na.rm = TRUE)
-    upper_bound <- quantile(resultat[[col]], probs = 0.995, na.rm = TRUE)
+    lower_bound <- quantile(resultat[[col]], probs = p_min, na.rm = TRUE)
+    upper_bound <- quantile(resultat[[col]], probs = p_max, na.rm = TRUE)
     c(lower_bound, upper_bound)
   })
 
