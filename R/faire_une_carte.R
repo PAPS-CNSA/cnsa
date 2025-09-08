@@ -19,12 +19,46 @@ NULL
 #' @param arrondi_valeurs Si on souhaite arrondir les valeurs, par exemple au milliers. Le principe est celui de round, dans R : round(115,4554, 1) => 115,5 / round(115,45554, -2) => 100
 #' @param taille_valeurs taille des valeurs affichées, en pourcentage de la hauteur de la carte. Par défaut, 2 (pour 2%)
 #' @param afficher_legende affiche, ou non, la légende à côté de la carte
+#' @param formatter_valeurs Fonction pour formatter les valeurs affichées dans la légende et le tooltip.
 #' @param save_png TRUE ou FALSE, selon qu'on souhaite ou non sauver un png avec l'image
 #' @return une carte format jpg
 #' @export
-
-faire_une_carte <- function(table, type_output = "image", region_concernee = "FRANCEENTIERE", titre_legende = "Legende", type_var_souhait = "CAT_AUTO", classes_souh = 5, chemin_sortie = "", type_palette = "viridis",
-                            afficher_valeurs = FALSE, couleur_valeurs = "black", arrondi_valeurs = NA, taille_valeurs = 2, afficher_legende = FALSE, save_png = FALSE) {
+#' @examples
+#'
+#' mes_data <- data.frame(
+#'   CODE_DEP = c(
+#'     "01", "02", "03", "04", "05", "06", "07", "08", "09", "10",
+#'     "11", "12", "13", "14", "15", "16", "17", "18", "19", "21", "22",
+#'     "23", "24", "25", "26", "27", "28", "29", "2A", "2B", "30", "31",
+#'     "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42",
+#'     "43", "44", "45", "46", "47", "48", "49", "50", "51", "52", "53",
+#'     "54", "55", "56", "57", "58", "59", "60", "61", "62", "63", "64",
+#'     "65", "66", "67", "68", "69", "70", "71", "72", "73", "74", "75",
+#'     "76", "77", "78", "79", "80", "81", "82", "83", "84", "85", "86",
+#'     "87", "88", "89", "90", "91", "92", "93", "94", "95", "971",
+#'     "972", "973", "974", "976"
+#'   ),
+#'   INDICATEUR = sample(1:100, 101, TRUE)
+#' )
+#' faire_une_carte(table = mes_data, type_output = "shiny")
+#'
+faire_une_carte <- function(table,
+                            type_output = "image",
+                            region_concernee = "FRANCEENTIERE",
+                            titre_legende = "Legende",
+                            type_var_souhait = "CAT_AUTO",
+                            classes_souh = 5,
+                            chemin_sortie = "",
+                            type_palette = "viridis",
+                            afficher_valeurs = FALSE,
+                            couleur_valeurs = "black",
+                            arrondi_valeurs = NA,
+                            taille_valeurs = 2,
+                            afficher_legende = TRUE,
+                            formatter_valeurs = function(x) {
+                              format(x, big.mark = " ", decimal.mark = ",", scientific = FALSE)
+                            },
+                            save_png = FALSE) {
   # Cette fonction fait une carte ! En entrée, il faut juste :
   # - les données à cartographier
   # - le type d'output (image, ou shiny)
@@ -37,12 +71,20 @@ faire_une_carte <- function(table, type_output = "image", region_concernee = "FR
   } else {
     colnames(table) <- c("DEPARTEMENT","VALEUR")
     table$DEPARTEMENT <- pad_left(table$DEPARTEMENT,2) # On s'assure de transformer les '1' en '01' pour eviter ce type de problème sur les départements
-    france_sf <- merge(france_shapefile, table, by.x = "code_insee", by.y = "DEPARTEMENT")
+    france_sf <- merge(france_depdom, table, by.x = "DEP", by.y = "DEPARTEMENT")
 
-    france_sf <- carte_restreindre_base(france_sf, region_concernee) # On restreint la base aux régions souhaitées
+    # france_sf <- carte_restreindre_base(france_sf, region_concernee) # On restreint la base aux régions souhaitées
 
-    france_sf$VALEUR_CLASSE <- transformer_variable(france_sf$VALEUR, type_var_souhait, classes_souh) # On transforme en classe
-    palette_couleur <- creer_palette(france_sf$VALEUR_CLASSE, type_palette) # Et on crée la palette de couleurs
+    france_sf$VALEUR_CLASSE <- transformer_variable(
+      france_sf$VALEUR,
+      type_var_souhait,
+      classes_souh,
+      formatter_valeurs = formatter_valeurs
+    ) # On transforme en classe
+    palette_couleur <- creer_palette(
+      france_sf$VALEUR_CLASSE,
+      type_palette
+    ) # Et on crée la palette de couleurs
 
 
     if (type_output == "image") {
@@ -54,9 +96,32 @@ faire_une_carte <- function(table, type_output = "image", region_concernee = "FR
         if (region_concernee == "FRANCEENTIERE_IDF") {
           creer_toutes_cartes(france_sf, palette = palette_couleur, titre_legende = titre_legende, regions_selectionnees = "FRANCEENTIERE", afficher_valeurs = afficher_valeurs, couleur_valeurs = couleur_valeurs, arrondi_valeurs = arrondi_valeurs, taille_valeurs = taille_valeurs, afficher_legende = afficher_legende, save_png = TRUE)
           cumuler_cartes(chemin_sortie)
-          creer_carte_indiv(france_sf, palette = palette_couleur, titre_legende = titre_legende, region = "11", afficher_valeurs = afficher_valeurs, couleur_valeurs = couleur_valeurs, arrondi_valeurs = arrondi_valeurs, taille_valeurs = taille_valeurs, afficher_legende = FALSE, save_png = TRUE)
+          creer_carte_indiv(
+            france_sf,
+            palette = palette_couleur,
+            titre_legende = titre_legende,
+            region = "11",
+            afficher_valeurs = afficher_valeurs,
+            couleur_valeurs = couleur_valeurs,
+            arrondi_valeurs = arrondi_valeurs,
+            taille_valeurs = taille_valeurs,
+            afficher_legende = FALSE,
+            formatter_valeurs = formatter_valeurs,
+            save_png = TRUE
+          )
         } else {
-          creer_carte_indiv(donnees = france_sf, region = region_concernee, palette = palette_couleur, titre_legende = titre_legende, afficher_valeurs=afficher_valeurs, arrondi_valeurs = arrondi_valeurs, taille_valeurs = taille_valeurs, afficher_legende = afficher_legende, save_png = TRUE )
+          creer_carte_indiv(
+            donnees = france_sf,
+            region = region_concernee,
+            palette = palette_couleur,
+            titre_legende = titre_legende,
+            afficher_valeurs=afficher_valeurs,
+            arrondi_valeurs = arrondi_valeurs,
+            taille_valeurs = taille_valeurs,
+            afficher_legende = afficher_legende,
+            formatter_valeurs = formatter_valeurs,
+            save_png = TRUE
+          )
         }
       }
 
@@ -64,10 +129,32 @@ faire_une_carte <- function(table, type_output = "image", region_concernee = "FR
       if (length(region_concernee)>=2) {
         resultat <- list()
         for (reg in region_concernee) {
-          resultat[[reg]] <- creer_carte_indiv(donnees = france_sf, region = reg, palette = palette_couleur, titre_legende = titre_legende, afficher_valeurs=afficher_valeurs, arrondi_valeurs = arrondi_valeurs, taille_valeurs = taille_valeurs, afficher_legende = afficher_legende, save_png = save_png )
+          resultat[[reg]] <- creer_carte_indiv(
+            donnees = france_sf,
+            region = reg,
+            palette = palette_couleur,
+            titre_legende = titre_legende,
+            afficher_valeurs = afficher_valeurs,
+            arrondi_valeurs = arrondi_valeurs,
+            taille_valeurs = taille_valeurs,
+            afficher_legende = afficher_legende,
+            formatter_valeurs = formatter_valeurs,
+            save_png = save_png
+          )
         }
       } else {
-        resultat <- creer_carte_indiv(donnees = france_sf, region = region_concernee, palette = palette_couleur, titre_legende = titre_legende, afficher_valeurs=afficher_valeurs, arrondi_valeurs = arrondi_valeurs, taille_valeurs = taille_valeurs, afficher_legende = afficher_legende, save_png = save_png )
+        resultat <- creer_carte_indiv(
+          donnees = france_sf,
+          region = region_concernee,
+          palette = palette_couleur,
+          titre_legende = titre_legende,
+          afficher_valeurs=afficher_valeurs,
+          arrondi_valeurs = arrondi_valeurs,
+          taille_valeurs = taille_valeurs,
+          afficher_legende = afficher_legende,
+          formatter_valeurs = formatter_valeurs,
+          save_png = save_png
+        )
       }
 
       return(resultat)

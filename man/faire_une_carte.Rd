@@ -17,7 +17,11 @@ faire_une_carte(
   couleur_valeurs = "black",
   arrondi_valeurs = NA,
   taille_valeurs = 2,
-  afficher_legende = FALSE,
+  afficher_legende = TRUE,
+  formatter_valeurs = function(x) {
+     format(x, big.mark = " ", decimal.mark = ",",
+    scientific = FALSE)
+ },
   save_png = FALSE
 )
 }
@@ -48,6 +52,8 @@ faire_une_carte(
 
 \item{afficher_legende}{affiche, ou non, la légende à côté de la carte}
 
+\item{formatter_valeurs}{Fonction pour formatter les valeurs affichées dans la légende et le tooltip.}
+
 \item{save_png}{TRUE ou FALSE, selon qu'on souhaite ou non sauver un png avec l'image}
 }
 \value{
@@ -56,4 +62,24 @@ une carte format jpg
 \description{
 Fournit pas mal d'options (en construction :)) pour obtenir des cartes dans différentes circonstances
 Le principe est d'utiliser un leaflet, voire plusieurs si on veut afficher les DOM
+}
+\examples{
+
+mes_data <- data.frame(
+  CODE_DEP = c(
+    "01", "02", "03", "04", "05", "06", "07", "08", "09", "10",
+    "11", "12", "13", "14", "15", "16", "17", "18", "19", "21", "22",
+    "23", "24", "25", "26", "27", "28", "29", "2A", "2B", "30", "31",
+    "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42",
+    "43", "44", "45", "46", "47", "48", "49", "50", "51", "52", "53",
+    "54", "55", "56", "57", "58", "59", "60", "61", "62", "63", "64",
+    "65", "66", "67", "68", "69", "70", "71", "72", "73", "74", "75",
+    "76", "77", "78", "79", "80", "81", "82", "83", "84", "85", "86",
+    "87", "88", "89", "90", "91", "92", "93", "94", "95", "971",
+    "972", "973", "974", "976"
+  ),
+  INDICATEUR = sample(1:100, 101, TRUE)
+)
+faire_une_carte(table = mes_data, type_output = "shiny")
+
 }
