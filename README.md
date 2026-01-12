@@ -1,3 +1,6 @@
+v. 1.1.5 (12 janvier 2026)
+Ajout de la branche carte-legende dans le package +  mise à jour des chemins GEOD
+
 4 août 2025
 
 La fonction carte_statique() peut à présent utiliser toutes les palettes de couleur de RColorRColorBrewer. Le package readxl a aussi été ajouté parmi les imports dans le fichier DESCRIPTION.R.

@@ -1,6 +1,6 @@
 library(testthat)
 library(data.table)
-context("Test sur la fonction format liste_v_vers_tablo")
+# context("Test sur la fonction format liste_v_vers_tablo")
 
 test_that("format_liste_v_vers_tablo renvoie une data.frame ou data.table selon le paramètre format_sortie", {
   liste_v <- list(

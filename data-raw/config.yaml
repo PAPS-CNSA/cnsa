@@ -1,6 +1,6 @@
 chemins:
-  insee: "G:/08. DPE/11. STATISTIQUES/04. Traitements Statistiques/14. INSEE/"
-  finess: "G:/08. DPE/11. STATISTIQUES/01. Repos/shiny-finess/Data/"
+  insee: "G:/08. DPE/11. STATISTIQUES/08. Bases de données/01. Bases brutes/14. INSEE/"
+  finess: "G:/08. DPE/11. STATISTIQUES/08. Bases de Données/02. Bases finales/15. SHINY FINESS/"
   finess_vm: "C:/CNSA/DONNEES/FINESS/"
   finess_sidata: "E:/CNSA/DONNEES/04. FINESS/"
 donnees:

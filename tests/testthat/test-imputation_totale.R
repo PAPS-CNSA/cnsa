@@ -1,5 +1,5 @@
 library(testthat)
-context("Test sur la fonction imputation_totale")
+# context("Test sur la fonction imputation_totale")
 
 test_that("imputation_totale fonctionne correctement", {
 

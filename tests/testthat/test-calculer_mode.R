@@ -1,5 +1,5 @@
 library(testthat)
-context("Test sur la fonction calculer_mode")
+# context("Test sur la fonction calculer_mode")
 
 test_that("calculer_mode retourne la modalité la plus fréquente", {
   # Cas normal

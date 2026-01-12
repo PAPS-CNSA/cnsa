@@ -14,10 +14,13 @@
 charger_reference_finess <- function(origine = "GEOD") {
   if (origine == "GEOD") {
     repertoire_finess <- cnsa::config$chemins$finess
+    # repertoire_finess <- config$chemins$finess
   } else if (origine == "VM") {
     repertoire_finess <- cnsa::config$chemins$finess_vm
+    # repertoire_finess <- config$chemins$finess_vm
   } else if (origine == "SIDATA") {
     repertoire_finess <- cnsa::config$chemins$finess_sidata
+    # repertoire_finess <- config$chemins$finess_sidata
   }
   resultat <- readRDS(paste0(repertoire_finess, "finess_full.rds"))
   return(resultat)
