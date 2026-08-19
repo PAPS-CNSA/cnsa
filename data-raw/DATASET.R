@@ -39,6 +39,16 @@ france_shapefile_departements <- france_shapefile_departements %>% mutate(REGION
 
 usethis::use_data(france_shapefile_departements, overwrite = TRUE)
 
+# Carte des départements COM
+shp_975 <- st_read("data-raw/shapefiles/975/DEPARTEMENT.shp")
+shp_977_978 <- st_read("data-raw/shapefiles/977_978/DEPARTEMENT.shp")
+
+shp_977_978 <- st_transform(shp_977_978, st_crs(shp_975))
+
+france_shapefile_com <- bind_rows(shp_975, shp_977_978)
+
+usethis::use_data(france_shapefile_com, overwrite = TRUE)
+
 # Carte des EPCI + départements pour cartes statiques
 
 ## Création de la table des EPCI + départements
