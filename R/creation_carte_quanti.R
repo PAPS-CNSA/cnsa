@@ -243,8 +243,18 @@ creation_carte_accessible <- function(notre_base,
       ) %>%
       st_as_sf()
 
+    # Dataframe pour St Pierre
+    df_st_pierre <- notre_base %>%
+      mutate(code_insee = as.character(DEPARTEMENT)) %>%
+      filter(code_insee %in% c("975")) %>%
+      left_join(sp_com %>%
+                  select(code_insee = INSEE_DEP, NOM_DEP = NOM, REGION = INSEE_REG, geometry)
+      ) %>%
+      st_as_sf()
+
     if (accessible) {
 
+      # Carte pour Saint Barth
       carte_st_barth <- ggplot(df_st_barth) +
         ggpattern::geom_sf_pattern(
           aes(
@@ -267,6 +277,30 @@ creation_carte_accessible <- function(notre_base,
           na.value = 0
         )
 
+      # Carte pour St Pierre
+      carte_st_pierre <- ggplot(df_st_pierre) +
+        ggpattern::geom_sf_pattern(
+          aes(
+            pattern = valeur,
+            fill = valeur,
+            pattern_angle = valeur
+          ),
+          pattern_fill = "black",
+          pattern_spacing = 0.08,
+          pattern_size = 0.005
+        ) +
+        scale_pattern_manual(
+          values = manual_pattern,
+          guide = "none",
+          na.value = "none"
+        ) +
+        scale_pattern_angle_manual(
+          values = angle_pattern,
+          guide = "none",
+          na.value = 0
+        )
+
+
     } else {
 
       carte_st_barth <- ggplot(df_st_barth) +
@@ -274,8 +308,14 @@ creation_carte_accessible <- function(notre_base,
           aes(fill = valeur)
         )
 
+      carte_st_pierre <- ggplot(df_st_pierre) +
+        geom_sf(
+          aes(fill = valeur)
+        )
+
     }
 
+    # Consolidation de la carte
     carte_st_barth <- carte_st_barth +
       theme_minimal(
         base_size = 18,
@@ -296,48 +336,6 @@ creation_carte_accessible <- function(notre_base,
         na.value = "grey80"
       )
 
-    # Dataframe pour St Pierre
-    df_st_pierre <- notre_base %>%
-      mutate(code_insee = as.character(DEPARTEMENT)) %>%
-      filter(code_insee %in% c("975")) %>%
-      left_join(sp_com %>%
-                  select(code_insee = INSEE_DEP, NOM_DEP = NOM, REGION = INSEE_REG, geometry)
-      ) %>%
-      st_as_sf()
-
-
-    if (accessible) {
-
-      carte_st_pierre <- ggplot(df_st_pierre) +
-        ggpattern::geom_sf_pattern(
-          aes(
-            pattern = valeur,
-            fill = valeur,
-            pattern_angle = valeur
-          ),
-          pattern_fill = "black",
-          pattern_spacing = 0.08,
-          pattern_size = 0.005
-        ) +
-        scale_pattern_manual(
-          values = manual_pattern,
-          guide = "none",
-          na.value = "none"
-        ) +
-        scale_pattern_angle_manual(
-          values = angle_pattern,
-          guide = "none",
-          na.value = 0
-        )
-
-    } else {
-
-      carte_st_pierre <- ggplot(df_st_pierre) +
-        geom_sf(
-          aes(fill = valeur)
-        )
-
-    }
 
     carte_st_pierre <- carte_st_pierre +
       theme_minimal(
